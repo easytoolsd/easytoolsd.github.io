@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>定制登录页 — 系统设置</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',Arial,sans-serif;font-size:14px;color:#333;background:#f0f2f5;height:100vh;display:flex;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:188px;background:#1f1f2e;flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-logo{padding:16px 18px;font-size:15px;font-weight:700;color:#e8423f;border-bottom:1px solid rgba(255,255,255,.07);letter-spacing:.5px}
+.sidebar-group{padding:10px 0}
+.sidebar-label{font-size:11px;color:#555;padding:6px 18px 2px;letter-spacing:.5px;text-transform:uppercase}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:13px;color:#9a9ab0;cursor:pointer;transition:all .15s}
+.sidebar-item:hover{color:#ddd;background:rgba(255,255,255,.04)}
+.sidebar-item.active{color:#fff;background:rgba(232,66,63,.15)}
+.sidebar-item .icon{font-size:15px;width:18px;text-align:center}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:46px;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 20px;gap:8px;flex-shrink:0}
+.topbar-breadcrumb{font-size:13px;color:#999}
+.topbar-breadcrumb span{color:#333;font-weight:500}
+
+/* ── Tabs ── */
+.tabs{background:#fff;border-bottom:1px solid #eee;padding:0 24px;display:flex;gap:0;flex-shrink:0;overflow-x:auto}
+.tab{padding:13px 18px;cursor:pointer;font-size:13px;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
+.tab:hover:not(.active){color:#333}
+.tab.active{color:#e8423f;border-bottom-color:#e8423f;font-weight:500}
+
+/* ── Content ── */
+.content-wrap{flex:1;overflow-y:auto;padding:24px}
+.content{max-width:880px}
+
+/* ── Toggle bar ── */
+.toggle-bar{background:#fff;border-radius:8px;border:1px solid #eee;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.25s}
+.slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input:checked~.slider{background:#e8423f}
+input:checked~.slider::before{transform:translateX(20px)}
+.toggle-desc{flex:1;font-size:13px;color:#666;line-height:1.5}
+.toggle-desc strong{color:#333;font-weight:500}
+.btn-goto{padding:8px 16px;background:#e8423f;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s}
+.btn-goto:hover{background:#c9322f}
+.btn-goto svg{width:13px;height:13px}
+.btn-goto.disabled{background:#ccc;cursor:not-allowed;pointer-events:none}
+
+/* ── Card section ── */
+.card{background:#fff;border-radius:8px;border:1px solid #eee;margin-bottom:16px;overflow:hidden}
+.card-header{padding:14px 20px 0;display:flex;align-items:baseline;gap:10px}
+.card-title{font-size:14px;font-weight:600;color:#222}
+.card-desc{font-size:12px;color:#999;flex:1}
+.card-body{padding:14px 20px 18px}
+
+/* ── Preview ── */
+.preview-title-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 0}
+.preview-hint{font-size:12px;color:#bbb;display:flex;align-items:center;gap:4px}
+.preview-hint svg{color:#faad14}
+.preview-container{padding:12px 20px 16px;position:relative}
+.browser-frame{border:1px solid #ddd;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.browser-bar{background:#f0f0f0;height:34px;display:flex;align-items:center;padding:0 12px;gap:8px;border-bottom:1px solid #ddd}
+.b-dots{display:flex;gap:5px}
+.b-dot{width:10px;height:10px;border-radius:50%}
+.b-url{flex:1;background:#fff;border-radius:4px;height:22px;display:flex;align-items:center;padding:0 10px;font-size:11px;color:#666;max-width:240px;margin:0 auto;border:1px solid #e8e8e8}
+.b-actions{display:flex;gap:8px;color:#aaa;font-size:13px}
+.preview-viewport{height:360px;position:relative;overflow:hidden;background:#e0e0e0}
+.vp-scale-wrap{position:absolute;top:0;left:0;transform-origin:top left}
+.login-page-render{width:1200px;height:680px;position:relative;overflow:hidden}
+
+/* Login page components */
+.lp-bg{position:absolute;inset:0;background:#ccc;background-size:cover;background-position:center}
+.lp-lang{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:12px;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;backdrop-filter:blur(4px)}
+.lp-dialog{position:absolute;top:50%;left:50%;transform:translate(-42%,-50%);display:flex;border-radius:10px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.35);width:760px;height:480px}
+.lp-left{width:340px;flex-shrink:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.lp-left-img{position:absolute;inset:0;background-size:cover;background-position:center}
+.lp-left-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,90,200,.88),rgba(0,180,220,.82))}
+.lp-left-content{position:relative;z-index:1;padding:32px;color:#fff;text-align:center}
+.lp-left-content h2{font-size:22px;font-weight:700;margin-bottom:8px;text-shadow:0 1px 4px rgba(0,0,0,.2)}
+.lp-left-content p{font-size:13px;line-height:1.7;opacity:.9}
+.lp-left-dot{display:flex;gap:6px;justify-content:center;margin-top:20px}
+.lp-left-dot span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4)}
+.lp-left-dot span.active{background:#fff}
+.lp-right{flex:1;background:#fff;display:flex;flex-direction:column;padding:32px}
+.lp-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.lp-logo-img{height:32px;max-width:100px;object-fit:contain}
+.lp-logo-placeholder{height:32px;width:80px;background:#e8423f;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.lp-logo-placeholder span{color:#fff;font-size:11px;font-weight:700}
+.lp-company{font-size:14px;color:#444;font-weight:500}
+.lp-tabs{display:flex;border-bottom:2px solid #f0f0f0;margin-bottom:20px;gap:0}
+.lp-tab{padding:8px 16px;font-size:13px;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.lp-tab.active{color:var(--theme);border-bottom-color:var(--theme)}
+.lp-input{width:100%;height:38px;border:1px solid #ddd;border-radius:5px;margin-bottom:12px;padding:0 12px;font-size:13px;color:#666;background:#fafafa}
+.lp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lp-check{display:flex;align-items:center;gap:6px;font-size:12px;color:#999}
+.lp-check input{accent-color:var(--theme)}
+.lp-forgot{font-size:12px;color:var(--theme);cursor:pointer}
+.lp-btn{width:100%;height:40px;border:none;border-radius:5px;color:#fff;font-size:14px;cursor:pointer;background:var(--theme)}
+.lp-footer-links{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:24px}
+.lp-footer-link{font-size:12px;text-decoration:none;cursor:pointer}
+
+/* Expand button */
+.expand-btn{position:absolute;top:46px;right:32px;width:30px;height:30px;background:rgba(255,255,255,.9);border:1px solid #ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.1);transition:all .15s}
+.expand-btn:hover{background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.expand-btn svg{width:15px;height:15px;color:#555}
+
+/* ── Domain ── */
+.domain-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.domain-input{width:110px;height:36px;border:1px solid #ddd;border-radius:5px;padding:0 10px;font-size:14px;transition:border .15s}
+.domain-input:focus{outline:none;border-color:#40a9ff;box-shadow:0 0 0 2px rgba(24,144,255,.1)}
+.domain-suffix{color:#555;font-size:14px;font-weight:500}
+.status-ok{display:inline-flex;align-items:center;gap:4px;background:#f6ffed;border:1px solid #b7eb8f;color:#52c41a;padding:4px 10px;border-radius:14px;font-size:12px}
+.status-err{display:inline-flex;align-items:center;gap:4px;background:#fff2f0;border:1px solid #ffccc7;color:#ff4d4f;padding:4px 10px;border-radius:14px;font-size:12px}
+.link-blue{color:#1890ff;text-decoration:none;font-size:13px}
+.link-blue:hover{text-decoration:underline}
+
+/* ── Upload zone ── */
+.upload-zone{width:160px;height:100px;border:2px dashed #ddd;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#bbb;background:#fafafa;transition:all .15s;position:relative;overflow:hidden}
+.upload-zone:hover{border-color:#aaa;background:#f5f5f5}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone .up-icon{font-size:22px;margin-bottom:4px}
+.upload-zone .up-text{font-size:12px}
+.upload-zone.logo-zone{width:220px;height:90px}
+.img-preview-wrap{display:flex;flex-direction:column;gap:6px}
+.img-preview{width:160px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #eee;display:block;background:#f0f0f0}
+.img-preview.logo-preview{width:220px;height:90px;object-fit:contain;background:#f9f9f9}
+.img-actions{display:flex;gap:12px}
+.ia{color:#1890ff;font-size:12px;cursor:pointer;border:none;background:none;padding:0;text-decoration:none}
+.ia:hover{text-decoration:underline}
+.ia.danger{color:#ff4d4f}
+.note{font-size:12px;color:#999;margin-top:6px;line-height:1.5}
+.note.sync{color:#fa8c16;display:flex;align-items:flex-start;gap:4px}
+
+/* ── Table ── */
+.tbl-wrap{border:1px solid #eee;border-radius:7px;overflow:hidden}
+.tbl-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px}
+.tbl-title{font-size:14px;font-weight:600;color:#222;display:flex;align-items:center;gap:8px}
+.tbl-count{font-size:12px;color:#bbb;font-weight:400}
+.tbl-desc{font-size:12px;color:#999}
+table{width:100%;border-collapse:collapse}
+thead th{background:#fafafa;padding:9px 12px;text-align:left;font-weight:500;color:#666;font-size:13px;border-bottom:1px solid #eee}
+tbody td{padding:9px 12px;border-bottom:1px solid #f5f5f5;vertical-align:middle;font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#fafafa}
+tbody tr.dragging td{opacity:.4;background:#e6f4ff}
+tbody tr.drag-over td:first-child{border-left:3px solid #1890ff}
+
+.drag-handle{cursor:grab;color:#ccc;font-size:16px;user-select:none;padding:0 2px}
+.drag-handle:hover{color:#999}
+.drag-handle:active{cursor:grabbing}
+
+.tbl-input{width:100%;height:30px;border:1px solid #ddd;border-radius:4px;padding:0 8px;font-size:13px;transition:border .15s}
+.tbl-input:focus{outline:none;border-color:#40a9ff;box-shadow:0 0 0 2px rgba(24,144,255,.1)}
+.with-count{display:flex;align-items:center;gap:4px}
+.cnt{font-size:11px;color:#ccc;white-space:nowrap;min-width:32px}
+.cnt.warn{color:#fa8c16}
+.cnt.over{color:#ff4d4f}
+
+.thumb-cell{display:flex;align-items:center;gap:8px}
+.tbl-thumb{width:44px;height:44px;border-radius:4px;border:1px solid #eee;object-fit:cover;background:#f0f0f0}
+.thumb-placeholder{width:44px;height:44px;border:2px dashed #ddd;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#ccc;cursor:pointer;background:#fafafa;position:relative;overflow:hidden;transition:all .15s;flex-shrink:0}
+.thumb-placeholder:hover{border-color:#aaa}
+.thumb-placeholder input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.thumb-actions{display:flex;flex-direction:column;gap:2px}
+.ta{font-size:12px;color:#1890ff;border:none;background:none;cursor:pointer;padding:0;text-align:left}
+.ta:hover{text-decoration:underline}
+.ta.danger{color:#ff4d4f}
+
+.btn-del{color:#ff4d4f;border:none;background:none;cursor:pointer;font-size:13px;padding:2px 0;transition:color .15s}
+.btn-del:hover{color:#c9322f}
+
+.btn-add-row{display:flex;align-items:center;gap:5px;color:#1890ff;border:none;background:none;cursor:pointer;font-size:13px;padding:10px 14px;transition:color .15s}
+.btn-add-row:hover{color:#096dd9}
+.btn-add-row:disabled{color:#ccc;cursor:not-allowed}
+.btn-add-row svg{width:14px;height:14px}
+
+/* ── Color picker ── */
+.color-row{display:flex;align-items:center;gap:0}
+.color-swatch{width:36px;height:36px;border-radius:5px 0 0 5px;border:1px solid #ddd;border-right:none;cursor:pointer;position:relative;overflow:hidden;flex-shrink:0}
+.color-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
+.color-hex{height:36px;border:1px solid #ddd;border-right:none;border-radius:0;padding:0 10px;font-size:13px;width:90px;font-family:monospace;outline:none}
+.color-hex:focus{border-color:#40a9ff;box-shadow:0 0 0 2px rgba(24,144,255,.1);z-index:1;position:relative}
+.color-caret{width:28px;height:36px;border:1px solid #ddd;border-radius:0 5px 5px 0;background:#fafafa;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#999;font-size:11px}
+
+/* ── Save actions ── */
+.actions{padding:20px 0 8px;display:flex;align-items:center;gap:12px;border-top:1px solid #f0f0f0;margin-top:8px}
+.btn-save{padding:8px 28px;background:#e8423f;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:500;transition:background .15s}
+.btn-save:hover{background:#c9322f}
+.btn-reset{padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:5px;cursor:pointer;font-size:14px;transition:all .15s}
+.btn-reset:hover{background:#f5f5f5}
+
+/* ── Fullscreen Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.fs-preview{width:100vw;height:100vh;position:relative;overflow:hidden}
+.fs-close{position:absolute;top:16px;right:16px;z-index:10;width:36px;height:36px;background:rgba(0,0,0,.5);border:none;color:#fff;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.fs-close:hover{background:rgba(0,0,0,.75)}
+.fs-login-page{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.fs-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.fs-lang{position:absolute;top:20px;right:24px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:13px;padding:6px 16px;border-radius:20px;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);z-index:2}
+.fs-dialog{position:relative;z-index:2;display:flex;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);max-width:900px;width:90%;height:520px}
+.fs-left{width:380px;flex-shrink:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.fs-left-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.fs-left-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,100,220,.9),rgba(0,190,230,.85))}
+.fs-left-content{position:relative;z-index:1;padding:40px;color:#fff;text-align:center}
+.fs-left-content h2{font-size:26px;font-weight:700;margin-bottom:10px}
+.fs-left-content p{font-size:13px;line-height:1.8;opacity:.9}
+.fs-dots{display:flex;gap:7px;justify-content:center;margin-top:24px}
+.fs-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
+.fs-dot.active{background:#fff;width:24px;border-radius:4px}
+.fs-right{flex:1;background:#fff;display:flex;flex-direction:column;padding:40px}
+.fs-logo-row{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.fs-logo{height:40px;max-width:120px;object-fit:contain}
+.fs-logo-ph{height:40px;padding:0 12px;background:#e8423f;border-radius:5px;display:flex;align-items:center}
+.fs-logo-ph span{color:#fff;font-size:13px;font-weight:700}
+.fs-company{font-size:16px;color:#333;font-weight:500}
+.fs-tabs{display:flex;border-bottom:2px solid #f0f0f0;margin-bottom:24px}
+.fs-tab{padding:10px 20px;font-size:14px;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.fs-tab.active{color:var(--theme);border-bottom-color:var(--theme)}
+.fs-input{width:100%;height:44px;border:1px solid #ddd;border-radius:6px;margin-bottom:14px;padding:0 14px;font-size:14px;background:#fafafa}
+.fs-meta{display:flex;justify-content:space-between;margin-bottom:16px}
+.fs-check{display:flex;align-items:center;gap:6px;font-size:13px;color:#999}
+.fs-forgot{font-size:13px;color:var(--theme);cursor:pointer}
+.fs-btn{width:100%;height:44px;border:none;border-radius:6px;color:#fff;font-size:15px;font-weight:500;cursor:pointer;background:var(--theme);transition:filter .15s}
+.fs-btn:hover{filter:brightness(.92)}
+.fs-terms{font-size:12px;color:#bbb;text-align:center;margin-top:12px}
+.fs-terms a{color:var(--theme)}
+.fs-footer{position:absolute;bottom:24px;left:0;right:0;display:flex;justify-content:center;gap:28px;z-index:2}
+.fs-footer a{font-size:13px;text-decoration:none;cursor:pointer}
+
+/* ── Confirm dialog ── */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.confirm-overlay.show{opacity:1;pointer-events:all}
+.confirm-box{background:#fff;border-radius:10px;padding:28px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.2);transform:scale(.96);transition:transform .15s}
+.confirm-overlay.show .confirm-box{transform:scale(1)}
+.confirm-icon{font-size:22px;margin-bottom:8px}
+.confirm-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.confirm-desc{font-size:14px;color:#666;margin-bottom:24px;line-height:1.6}
+.confirm-actions{display:flex;justify-content:flex-end;gap:10px}
+.btn-cc{padding:7px 18px;background:#fff;color:#666;border:1px solid #ddd;border-radius:5px;cursor:pointer;font-size:14px}
+.btn-cc:hover{background:#f5f5f5}
+.btn-cd{padding:7px 18px;background:#ff4d4f;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:14px}
+.btn-cd:hover{background:#d32f2f}
+
+/* ── Toast ── */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-4px);background:#333;color:#fff;padding:10px 20px;border-radius:6px;font-size:14px;z-index:3000;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{background:#52c41a}
+.toast.error{background:#ff4d4f}
+
+/* ── Misc ── */
+.req{color:#ff4d4f;margin-left:2px}
+.divider{border:none;border-top:1px solid #f0f0f0;margin:14px 0}
+.hidden{display:none!important}
+.globe-btn{border:1px solid #ddd;border-radius:4px;width:26px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#999;background:#fafafa;font-size:13px;flex-shrink:0;transition:all .15s}
+.globe-btn:hover{border-color:#aaa;color:#555}
+</style>
+</head>
+<body>
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">孚盟MX</div>
+  <div class="sidebar-group">
+    <div class="sidebar-label">系统</div>
+    <div class="sidebar-item"><span class="icon">🏢</span>系统参数</div>
+    <div class="sidebar-item"><span class="icon">💼</span>业务设置</div>
+    <div class="sidebar-item active"><span class="icon">⚙️</span>账号设置</div>
+    <div class="sidebar-item"><span class="icon">💰</span>费用中心</div>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-label">管理</div>
+    <div class="sidebar-item"><span class="icon">👥</span>组织架构</div>
+    <div class="sidebar-item"><span class="icon">🔐</span>角色和权限管理</div>
+    <div class="sidebar-item"><span class="icon">📋</span>日志与行为</div>
+    <div class="sidebar-item"><span class="icon">🔧</span>业务字段配置</div>
+  </div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-breadcrumb">账号设置 / <span>定制登录页</span></span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab">企业设置</div>
+    <div class="tab active">定制登录页</div>
+    <div class="tab">本地化设置</div>
+    <div class="tab">安全设置</div>
+    <div class="tab">员工邮箱白名单</div>
+    <div class="tab">微信小程序</div>
+    <div class="tab">第三方授权</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-wrap">
+    <div class="content">
+
+      <!-- Toggle bar -->
+      <div class="toggle-bar">
+        <label class="toggle">
+          <input type="checkbox" id="masterToggle" checked onchange="onToggle(this.checked)">
+          <span class="slider"></span>
+        </label>
+        <div class="toggle-desc">
+          <strong>开启定制登录页</strong> — 开启后可设计企业专属登录页样式，并通过专属二级域名访问
+        </div>
+        <button class="btn-goto" id="gotoBtn" onclick="openFullscreen()">
+          前往登录页
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </button>
+      </div>
+
+      <!-- Preview card -->
+      <div class="card">
+        <div class="preview-title-row">
+          <div class="card-title">效果预览</div>
+          <div class="preview-hint">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#faad14" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            保存后预览图将同步更新
+          </div>
+        </div>
+        <div class="preview-container">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <div class="b-dots">
+                <div class="b-dot" style="background:#ff5f57"></div>
+                <div class="b-dot" style="background:#febc2e"></div>
+                <div class="b-dot" style="background:#28c840"></div>
+              </div>
+              <div class="b-url" id="previewUrl">sun.fumamx.com</div>
+              <div class="b-actions">⟳ ↗</div>
+            </div>
+            <div class="preview-viewport" id="previewViewport">
+              <div class="vp-scale-wrap" id="vpScaleWrap">
+                <div class="login-page-render" id="miniLoginPage"></div>
+              </div>
+            </div>
+          </div>
+          <button class="expand-btn" onclick="openFullscreen()" title="全屏预览">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Domain -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">二级域名</div>
+          <div class="card-desc">如果您有自己的域名，需要设置通过此域名登录，请在自己的域名服务后台 DNS 设置 CName 转发</div>
+          <a href="#" class="link-blue" onclick="return false">设置方法</a>
+        </div>
+        <div class="card-body">
+          <div class="domain-row">
+            <input class="domain-input" type="text" id="domainInput" value="sun" oninput="onDomainInput(this.value)" placeholder="子域名">
+            <span class="domain-suffix">.fumamx.com</span>
+            <span class="status-ok" id="domainStatus">✓ 可使用</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background image -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">背景图</div>
+          <div class="card-desc">推荐 1920×1080，支持 jpg、jpeg、png。未上传则显示默认灰色背景</div>
+        </div>
+        <div class="card-body">
+          <div id="bgZone">
+            <label class="upload-zone" id="bgUploadZone">
+              <input type="file" accept="image/jpg,image/jpeg,image/png" onchange="onBgUpload(event)">
+              <div class="up-icon">🖼</div>
+              <div class="up-text">点击上传背景图</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">企业 Logo</div>
+          <div class="card-desc">推荐 260×100px，仅支持 PNG 背景透明格式。未设置则登录页不显示 Logo 区域</div>
+        </div>
+        <div class="card-body">
+          <div id="logoZone">
+            <label class="upload-zone logo-zone" id="logoUploadZone">
+              <input type="file" accept="image/png" onchange="onLogoUpload(event)">
+              <div class="up-icon">🏷</div>
+              <div class="up-text">点击上传 Logo（PNG）</div>
+            </label>
+          </div>
+          <div class="note sync">
+            <span>⚠</span>
+            与「企业设置」中的企业 Logo 保持同步，此处修改后两处同步更新
+          </div>
+        </div>
+      </div>
+
+      <!-- Carousel -->
+      <div class="card">
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div class="card-title">轮播图 <span id="carouselCount" style="font-weight:400;color:#bbb;font-size:13px">(0/5)</span></div>
+          </div>
+          <div class="card-desc">推荐 600×600px，支持 jpg、jpeg、png。未设置则不显示轮播区域；未设置跳转链接则不可点击</div>
+        </div>
+        <div class="card-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:40px"></th>
+                  <th style="width:32px">序号</th>
+                  <th style="width:130px">轮播图</th>
+                  <th>跳转链接</th>
+                  <th style="width:70px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="carouselBody"></tbody>
+            </table>
+            <button class="btn-add-row" id="btnAddCarousel" onclick="addCarousel()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              增加轮播图
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer links -->
+      <div class="card">
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div class="card-title">底部链接 <span id="footerCount" style="font-weight:400;color:#bbb;font-size:13px">(0/4)</span></div>
+          </div>
+          <div class="card-desc">未设置则不显示底部链接区域；未设置跳转链接则不可点击</div>
+        </div>
+        <div class="card-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:32px">序号</th>
+                  <th style="width:160px">链接名字（中文）<span class="req">*</span></th>
+                  <th style="width:200px">
+                    <span style="display:flex;align-items:center;gap:4px">
+                      链接英文名
+                      <span title="其他小语种在「个人中心 → 语言设置」中配置" style="cursor:pointer;color:#bbb;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:0 4px">ℹ</span>
+                    </span>
+                  </th>
+                  <th>跳转 URL</th>
+                  <th style="width:50px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="footerBody"></tbody>
+            </table>
+            <button class="btn-add-row" id="btnAddFooter" onclick="addFooterLink()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              增加底部链接
+            </button>
+          </div>
+          <div class="note" style="margin-top:8px">
+            💡 小语种链接名在系统「个人中心 → 语言设置」中配置；切换语种时登录页自动展示对应语种，未填写则回退至英文名，英文名未填则显示中文名
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer link color -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">底部链接文字颜色</div>
+          <div class="card-desc">建议深色背景图使用浅色文字，浅色背景图使用深色文字</div>
+        </div>
+        <div class="card-body">
+          <div class="color-row">
+            <div class="color-swatch" id="footerColorSwatch" style="background:#666666">
+              <input type="color" id="footerColorPicker" value="#666666" oninput="onFooterColorInput(this.value)">
+            </div>
+            <input type="text" class="color-hex" id="footerColorHex" value="#666666" maxlength="7" oninput="onFooterColorHex(this.value)">
+            <div class="color-caret">▾</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme color -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">主题颜色</div>
+          <div class="card-desc">作用于登录页的登录按钮和 TAB 切换选中色</div>
+        </div>
+        <div class="card-body">
+          <div class="color-row">
+            <div class="color-swatch" id="themeColorSwatch" style="background:#E5703F">
+              <input type="color" id="themeColorPicker" value="#E5703F" oninput="onThemeColorInput(this.value)">
+            </div>
+            <input type="text" class="color-hex" id="themeColorHex" value="#E5703F" maxlength="7" oninput="onThemeColorHex(this.value)">
+            <div class="color-caret">▾</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save actions -->
+      <div class="actions">
+        <button class="btn-save" onclick="save()">保存</button>
+        <button class="btn-reset" onclick="showToast('已重置为上次保存的配置','')">重置</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FULLSCREEN PREVIEW MODAL ════════ -->
+<div class="modal-overlay" id="fsModal">
+  <div class="fs-preview">
+    <button class="fs-close" onclick="closeFullscreen()">✕</button>
+    <div class="fs-login-page" id="fsLoginPage"></div>
+  </div>
+</div>
+
+<!-- ════════ CONFIRM DIALOG ════════ -->
+<div class="confirm-overlay" id="confirmModal">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">确认删除</div>
+    <div class="confirm-desc" id="confirmDesc">确认删除该条数据？删除后不可恢复。</div>
+    <div class="confirm-actions">
+      <button class="btn-cc" onclick="closeConfirm()">取消</button>
+      <button class="btn-cd" id="confirmOk">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TOAST ════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── State ─── */
+let state = {
+  enabled: true,
+  domain: 'sun',
+  bgImage: null,
+  bgImageName: null,
+  logo: null,
+  logoName: null,
+  carousel: [],
+  footerLinks: [],
+  footerColor: '#666666',
+  themeColor: '#E5703F'
+};
+let savedState = JSON.parse(JSON.stringify(state));
+let nextId = 1;
+
+/* ─── Init ─── */
+window.addEventListener('DOMContentLoaded', () => {
+  addCarouselRow({ img: null, link: 'https://www.fumasoft.com/' });
+  addFooterRow({ zh: '公司官网', en: 'Official Website', url: 'https://www.fumasoft.com/' });
+  addFooterRow({ zh: '公司动态', en: 'Company News', url: '' });
+  savedState = deepClone(state);
+  renderMiniPreview();
+  scalePreview();
+  window.addEventListener('resize', scalePreview);
+});
+
+function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+
+/* ─── Scale preview ─── */
+function scalePreview() {
+  const vp = document.getElementById('previewViewport');
+  if (!vp) return;
+  const w = vp.offsetWidth;
+  const scale = w / 1200;
+  const wrap = document.getElementById('vpScaleWrap');
+  wrap.style.transform = `scale(${scale})`;
+  vp.style.height = (680 * scale) + 'px';
+}
+
+/* ─── Toggle ─── */
+function onToggle(val) {
+  state.enabled = val;
+  document.getElementById('gotoBtn').classList.toggle('disabled', !val);
+}
+
+/* ─── Domain ─── */
+let domainTimer;
+function onDomainInput(val) {
+  state.domain = val;
+  const s = document.getElementById('domainStatus');
+  s.className = '';
+  s.textContent = '检测中…';
+  clearTimeout(domainTimer);
+  domainTimer = setTimeout(() => {
+    if (val.length < 2) {
+      s.className = 'status-err';
+      s.textContent = '✕ 长度不足';
+    } else if (val === 'admin' || val === 'www') {
+      s.className = 'status-err';
+      s.textContent = '✕ 已被占用';
+    } else {
+      s.className = 'status-ok';
+      s.textContent = '✓ 可使用';
+    }
+  }, 600);
+  document.getElementById('previewUrl').textContent = (val || 'xxx') + '.fumamx.com';
+}
+
+/* ─── Background image ─── */
+function onBgUpload(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    state.bgImage = ev.target.result;
+    state.bgImageName = f.name;
+    renderBgZone();
+  };
+  r.readAsDataURL(f);
+}
+function removeBg() {
+  state.bgImage = null; state.bgImageName = null;
+  renderBgZone();
+}
+function renderBgZone() {
+  const z = document.getElementById('bgZone');
+  if (state.bgImage) {
+    z.innerHTML = `
+      <div class="img-preview-wrap">
+        <img class="img-preview" src="${state.bgImage}" alt="背景图">
+        <div class="img-actions">
+          <a class="ia" href="#" onclick="triggerBgUpload();return false">更换图片</a>
+          <a class="ia danger" href="#" onclick="removeBg();return false">清除图片</a>
+        </div>
+        <input type="file" id="bgFileInput" accept="image/*" style="display:none" onchange="onBgUpload(event)">
+      </div>`;
+  } else {
+    z.innerHTML = `<label class="upload-zone" id="bgUploadZone"><input type="file" accept="image/*" onchange="onBgUpload(event)"><div class="up-icon">🖼</div><div class="up-text">点击上传背景图</div></label>`;
+  }
+}
+function triggerBgUpload() { document.getElementById('bgFileInput').click(); }
+
+/* ─── Logo ─── */
+function onLogoUpload(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { state.logo = ev.target.result; state.logoName = f.name; renderLogoZone(); };
+  r.readAsDataURL(f);
+}
+function removeLogo() { state.logo = null; state.logoName = null; renderLogoZone(); }
+function renderLogoZone() {
+  const z = document.getElementById('logoZone');
+  if (state.logo) {
+    z.innerHTML = `
+      <div class="img-preview-wrap">
+        <img class="img-preview logo-preview" src="${state.logo}" alt="Logo">
+        <div class="img-actions">
+          <a class="ia" href="#" onclick="triggerLogoUpload();return false">更换图片</a>
+          <a class="ia danger" href="#" onclick="removeLogo();return false">清除图片</a>
+        </div>
+        <input type="file" id="logoFileInput" accept="image/png" style="display:none" onchange="onLogoUpload(event)">
+      </div>`;
+  } else {
+    z.innerHTML = `<label class="upload-zone logo-zone"><input type="file" accept="image/png" onchange="onLogoUpload(event)"><div class="up-icon">🏷</div><div class="up-text">点击上传 Logo（PNG）</div></label>`;
+  }
+}
+function triggerLogoUpload() { document.getElementById('logoFileInput').click(); }
+
+/* ─── Carousel ─── */
+function addCarouselRow(data = {}) {
+  if (state.carousel.length >= 5) return;
+  const item = { id: nextId++, img: data.img || null, link: data.link || '' };
+  state.carousel.push(item);
+  renderCarouselTable();
+}
+function addCarousel() { addCarouselRow(); }
+function removeCarousel(id) {
+  confirmDelete('删除该轮播图', () => {
+    state.carousel = state.carousel.filter(c => c.id !== id);
+    renderCarouselTable();
+  });
+}
+function onCarouselImgUpload(id, e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    const item = state.carousel.find(c => c.id === id);
+    if (item) { item.img = ev.target.result; renderCarouselTable(); }
+  };
+  r.readAsDataURL(f);
+}
+function removeCarouselImg(id) {
+  const item = state.carousel.find(c => c.id === id);
+  if (item) { item.img = null; renderCarouselTable(); }
+}
+function onCarouselLinkChange(id, val) {
+  const item = state.carousel.find(c => c.id === id);
+  if (item) item.link = val;
+}
+function renderCarouselTable() {
+  const tbody = document.getElementById('carouselBody');
+  const count = state.carousel.length;
+  document.getElementById('carouselCount').textContent = `(${count}/5)`;
+  document.getElementById('btnAddCarousel').disabled = count >= 5;
+  tbody.innerHTML = state.carousel.map((item, idx) => `
+    <tr draggable="true" data-id="${item.id}" ondragstart="dragStart(event,'carousel')" ondragover="dragOver(event)" ondrop="dropRow(event,'carousel')" ondragleave="dragLeave(event)">
+      <td><span class="drag-handle" title="拖拽排序">⠿</span></td>
+      <td style="color:#999">${idx + 1}</td>
+      <td>
+        <div class="thumb-cell">
+          ${item.img
+            ? `<img class="tbl-thumb" src="${item.img}" alt=""><div class="thumb-actions"><button class="ta" onclick="triggerCarouselImg(${item.id})">更换</button><button class="ta danger" onclick="removeCarouselImg(${item.id})">删除图片</button></div><input type="file" id="cimg${item.id}" accept="image/*" style="display:none" onchange="onCarouselImgUpload(${item.id},event)">`
+            : `<label class="thumb-placeholder" title="上传图片"><input type="file" accept="image/*" onchange="onCarouselImgUpload(${item.id},event)">＋</label>`
+          }
+        </div>
+      </td>
+      <td><input class="tbl-input" type="text" value="${item.link}" placeholder="https://（选填，不填则不可点击）" oninput="onCarouselLinkChange(${item.id},this.value)"></td>
+      <td><button class="btn-del" onclick="removeCarousel(${item.id})">删除</button></td>
+    </tr>`).join('');
+}
+function triggerCarouselImg(id) { document.getElementById('cimg' + id).click(); }
+
+/* ─── Footer links ─── */
+function addFooterRow(data = {}) {
+  if (state.footerLinks.length >= 4) return;
+  state.footerLinks.push({ id: nextId++, zh: data.zh || '', en: data.en || '', url: data.url || '' });
+  renderFooterTable();
+}
+function addFooterLink() { addFooterRow(); }
+function removeFooterLink(id) {
+  confirmDelete('删除该底部链接', () => {
+    state.footerLinks = state.footerLinks.filter(l => l.id !== id);
+    renderFooterTable();
+  });
+}
+function onFooterZhChange(id, val) {
+  const item = state.footerLinks.find(l => l.id === id);
+  if (item) { item.zh = val; updateCharCount('zh' + id, val, 10); }
+}
+function onFooterEnChange(id, val) {
+  const item = state.footerLinks.find(l => l.id === id);
+  if (item) { item.en = val; updateCharCount('en' + id, val, 30); }
+}
+function onFooterUrlChange(id, val) {
+  const item = state.footerLinks.find(l => l.id === id);
+  if (item) item.url = val;
+}
+function updateCharCount(elId, val, max) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const len = [...val].length;
+  el.textContent = `${len}/${max}`;
+  el.className = 'cnt' + (len > max ? ' over' : len > max * 0.8 ? ' warn' : '');
+}
+function renderFooterTable() {
+  const tbody = document.getElementById('footerBody');
+  const count = state.footerLinks.length;
+  document.getElementById('footerCount').textContent = `(${count}/4)`;
+  document.getElementById('btnAddFooter').disabled = count >= 4;
+  tbody.innerHTML = state.footerLinks.map((item, idx) => `
+    <tr>
+      <td style="color:#999">${idx + 1}</td>
+      <td>
+        <div class="with-count">
+          <input class="tbl-input" type="text" value="${escHtml(item.zh)}" maxlength="10" placeholder="中文名（最多10字）" oninput="onFooterZhChange(${item.id},this.value)" style="flex:1">
+          <span class="cnt" id="zh${item.id}">${[...item.zh].length}/10</span>
+        </div>
+      </td>
+      <td>
+        <div class="with-count">
+          <input class="tbl-input" type="text" value="${escHtml(item.en)}" maxlength="30" placeholder="英文名（最多30字）" oninput="onFooterEnChange(${item.id},this.value)" style="flex:1">
+          <span class="cnt" id="en${item.id}">${item.en.length}/30</span>
+        </div>
+      </td>
+      <td><input class="tbl-input" type="text" value="${escHtml(item.url)}" placeholder="https://（选填）" oninput="onFooterUrlChange(${item.id},this.value)"></td>
+      <td><button class="btn-del" onclick="removeFooterLink(${item.id})">删除</button></td>
+    </tr>`).join('');
+}
+
+/* ─── Colors ─── */
+function onFooterColorInput(v) {
+  state.footerColor = v;
+  document.getElementById('footerColorSwatch').style.background = v;
+  document.getElementById('footerColorHex').value = v;
+}
+function onFooterColorHex(v) {
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    state.footerColor = v;
+    document.getElementById('footerColorSwatch').style.background = v;
+    document.getElementById('footerColorPicker').value = v;
+  }
+}
+function onThemeColorInput(v) {
+  state.themeColor = v;
+  document.getElementById('themeColorSwatch').style.background = v;
+  document.getElementById('themeColorHex').value = v;
+}
+function onThemeColorHex(v) {
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    state.themeColor = v;
+    document.getElementById('themeColorSwatch').style.background = v;
+    document.getElementById('themeColorPicker').value = v;
+  }
+}
+
+/* ─── Save ─── */
+function save() {
+  savedState = deepClone(state);
+  renderMiniPreview();
+  showToast('保存成功，预览图已更新', 'success');
+}
+
+/* ─── Mini preview render ─── */
+function renderMiniPreview() {
+  const el = document.getElementById('miniLoginPage');
+  el.innerHTML = buildLoginPageHTML(savedState, false);
+  el.style.setProperty('--theme', savedState.themeColor);
+}
+
+function buildLoginPageHTML(s, fullSize) {
+  const bg = s.bgImage
+    ? `background-image:url(${s.bgImage});background-size:cover;background-position:center;`
+    : 'background:linear-gradient(145deg,#1a1a2e,#16213e,#0f3460);';
+
+  const hasCarousel = s.carousel.length > 0;
+  const firstCarousel = hasCarousel ? s.carousel[0] : null;
+
+  const logoHTML = s.logo
+    ? `<img class="${fullSize?'fs-logo':'lp-logo-img'}" src="${s.logo}" alt="Logo">`
+    : `<div class="${fullSize?'fs-logo-ph':'lp-logo-placeholder'}"><span>LOGO</span></div>`;
+
+  const footerLinks = s.footerLinks.map(l =>
+    `<a class="${fullSize?'fs-footer':'lp-footer-link'} lp-footer-link-item" href="${l.url||'#'}" style="color:${s.footerColor}" onclick="return false">${escHtml(l.zh||l.en)}</a>`
+  ).join('');
+
+  if (fullSize) {
+    return `
+      <div class="fs-bg" style="${bg}"></div>
+      <div class="fs-lang">🌐 中文简体 ▾</div>
+      <div class="fs-dialog" style="--theme:${s.themeColor}">
+        ${hasCarousel ? `
+        <div class="fs-left">
+          ${firstCarousel.img ? `<div class="fs-left-bg" style="background-image:url(${firstCarousel.img});background-size:cover;background-position:center"></div>` : ''}
+          <div class="fs-left-overlay"></div>
+          <div class="fs-left-content">
+            <h2>孚盟 AI Pro</h2>
+            <p>AI 驱动外贸 CRM，从数字化走向智能化<br>主动推进人，全行为感知，构建真正可落地的智能操作系统</p>
+            <div class="fs-dots">
+              ${s.carousel.map((_, i) => `<span class="fs-dot${i===0?' active':''}"></span>`).join('')}
+            </div>
+          </div>
+        </div>` : ''}
+        <div class="fs-right">
+          <div class="fs-logo-row">${logoHTML}<span class="fs-company">深圳市概念投资有限公司</span></div>
+          <div class="fs-tabs">
+            <div class="fs-tab active">账密登录</div>
+            <div class="fs-tab">扫码登录</div>
+            <div class="fs-tab">第三方登录</div>
+          </div>
+          <input class="fs-input" type="text" placeholder="请输入账号">
+          <input class="fs-input" type="password" placeholder="请输入密码">
+          <div class="fs-meta">
+            <label class="fs-check"><input type="checkbox"> 记住密码</label>
+            <span class="fs-forgot">找回密码</span>
+          </div>
+          <button class="fs-btn">登 录</button>
+          <div class="fs-terms">登录即表示同意孚盟MX的 <a href="#">《服务条款与隐私政策》</a></div>
+        </div>
+      </div>
+      ${s.footerLinks.length > 0 ? `<div class="fs-footer">${footerLinks}</div>` : ''}`;
+  } else {
+    return `
+      <div class="lp-bg" style="${bg}"></div>
+      <div class="lp-lang">🌐 中文简体 ▾</div>
+      <div class="lp-dialog" style="--theme:${s.themeColor}">
+        ${hasCarousel ? `
+        <div class="lp-left">
+          ${firstCarousel.img ? `<div class="lp-left-img" style="background-image:url(${firstCarousel.img});background-size:cover;background-position:center"></div>` : ''}
+          <div class="lp-left-overlay"></div>
+          <div class="lp-left-content">
+            <h2>孚盟 AI Pro</h2>
+            <p>AI 驱动外贸 CRM，从数字化走向智能化</p>
+            <div class="lp-left-dot">
+              ${s.carousel.map((_, i) => `<span class="${i===0?'active':''}"></span>`).join('')}
+            </div>
+          </div>
+        </div>` : ''}
+        <div class="lp-right">
+          <div class="lp-logo-row">${logoHTML}<span style="font-size:12px;color:#444">深圳市概念投资有限公司</span></div>
+          <div class="lp-tabs">
+            <div class="lp-tab active">账密登录</div>
+            <div class="lp-tab">扫码登录</div>
+            <div class="lp-tab">第三方登录</div>
+          </div>
+          <input class="lp-input" type="text" placeholder="请输入账号">
+          <input class="lp-input" type="password" placeholder="请输入密码">
+          <div class="lp-row">
+            <div class="lp-check"><input type="checkbox"> <span style="font-size:11px">记住密码</span></div>
+            <span class="lp-forgot" style="font-size:11px">找回密码</span>
+          </div>
+          <button class="lp-btn">登 录</button>
+        </div>
+      </div>
+      ${s.footerLinks.length > 0 ? `<div class="lp-footer-links">${footerLinks}</div>` : ''}`;
+  }
+}
+
+/* ─── Fullscreen preview ─── */
+function openFullscreen() {
+  const el = document.getElementById('fsLoginPage');
+  el.innerHTML = buildLoginPageHTML(savedState, true);
+  el.style.setProperty('--theme', savedState.themeColor);
+  document.getElementById('fsModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeFullscreen() {
+  document.getElementById('fsModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.getElementById('fsModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('fsModal')) closeFullscreen();
+});
+
+/* ─── Drag and drop (carousel) ─── */
+let dragSrcId = null, dragTable = null;
+function dragStart(e, table) {
+  dragSrcId = parseInt(e.currentTarget.dataset.id);
+  dragTable = table;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dropRow(e, table) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const targetId = parseInt(e.currentTarget.dataset.id);
+  if (dragSrcId === targetId || dragTable !== table) return;
+  const arr = table === 'carousel' ? state.carousel : state.footerLinks;
+  const fromIdx = arr.findIndex(i => i.id === dragSrcId);
+  const toIdx = arr.findIndex(i => i.id === targetId);
+  if (fromIdx < 0 || toIdx < 0) return;
+  const [moved] = arr.splice(fromIdx, 1);
+  arr.splice(toIdx, 0, moved);
+  if (table === 'carousel') renderCarouselTable();
+  else renderFooterTable();
+  dragSrcId = null;
+}
+document.addEventListener('dragend', () => {
+  document.querySelectorAll('tr.dragging').forEach(el => el.classList.remove('dragging'));
+  document.querySelectorAll('tr.drag-over').forEach(el => el.classList.remove('drag-over'));
+});
+
+/* ─── Confirm dialog ─── */
+let confirmCallback = null;
+function confirmDelete(what, cb) {
+  confirmCallback = cb;
+  document.getElementById('confirmTitle').textContent = `确认删除${what ? '：' + what : ''}`;
+  document.getElementById('confirmDesc').textContent = '删除后数据不可恢复，请确认是否继续。';
+  document.getElementById('confirmModal').classList.add('show');
+}
+document.getElementById('confirmOk').onclick = () => {
+  if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+  closeConfirm();
+};
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); confirmCallback = null; }
+document.getElementById('confirmModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirmModal')) closeConfirm();
+});
+
+/* ─── Toast ─── */
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+/* ─── Utils ─── */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
