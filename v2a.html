@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Audio Extractor - Video to Audio Converter</title>
+  <meta name="description" content="Smart Audio Extractor helps you extract audio from videos, trim clips, convert formats, merge audio, and create ringtones locally on your Android device.">
+  <style>
+    :root {
+      --primary: #226ec9;
+      --accent: #2ecad1;
+      --green: #00bfa5;
+      --text: #1a1c1e;
+      --muted: #5f6874;
+      --line: #dde2ea;
+      --bg: #f5f8fb;
+      --panel: #ffffff;
+      --soft-blue: #e3f2fd;
+      --soft-green: #e8f5e9;
+      --soft-aqua: #e0f7fa;
+      --soft-orange: #fff3e0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      box-shadow: 0 8px 22px rgba(34, 110, 201, 0.22);
+    }
+
+    .brand span {
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .section {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      align-items: center;
+      gap: 52px;
+      padding-top: 64px;
+      padding-bottom: 54px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 720px;
+      font-size: 56px;
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 22px 0 0;
+      max-width: 640px;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 8px;
+      font-weight: 750;
+      border: 1px solid transparent;
+    }
+
+    .button.primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(34, 110, 201, 0.24);
+    }
+
+    .button.secondary {
+      background: #fff;
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .trust {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 32px;
+      max-width: 680px;
+    }
+
+    .trust-item {
+      padding: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .trust-item strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .trust-item span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .device {
+      position: relative;
+      min-height: 520px;
+      padding: 24px;
+      border-radius: 28px;
+      background: #17202b;
+      box-shadow: 0 30px 70px rgba(26, 28, 30, 0.26);
+      overflow: hidden;
+    }
+
+    .phone-screen {
+      height: 100%;
+      min-height: 472px;
+      padding: 22px;
+      border-radius: 20px;
+      background: #f7fafc;
+      overflow: hidden;
+    }
+
+    .screen-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .screen-title {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .screen-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .tool-tile {
+      min-height: 94px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .tool-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: var(--soft-aqua);
+      color: #007780;
+      font-weight: 900;
+    }
+
+    .tool-tile:nth-child(2) .tool-icon {
+      background: var(--soft-green);
+      color: #2c7d32;
+    }
+
+    .tool-tile:nth-child(3) .tool-icon {
+      background: var(--soft-blue);
+      color: var(--primary);
+    }
+
+    .tool-tile:nth-child(4) .tool-icon {
+      background: var(--soft-orange);
+      color: #c46a00;
+    }
+
+    .tool-tile strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .tool-tile span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .wave-panel {
+      padding: 16px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .wave-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .wave {
+      height: 86px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent), var(--primary));
+    }
+
+    .bar:nth-child(1) { height: 28%; }
+    .bar:nth-child(2) { height: 52%; }
+    .bar:nth-child(3) { height: 72%; }
+    .bar:nth-child(4) { height: 42%; }
+    .bar:nth-child(5) { height: 86%; }
+    .bar:nth-child(6) { height: 60%; }
+    .bar:nth-child(7) { height: 36%; }
+    .bar:nth-child(8) { height: 78%; }
+    .bar:nth-child(9) { height: 50%; }
+    .bar:nth-child(10) { height: 30%; }
+    .bar:nth-child(11) { height: 68%; }
+    .bar:nth-child(12) { height: 90%; }
+    .bar:nth-child(13) { height: 45%; }
+    .bar:nth-child(14) { height: 74%; }
+    .bar:nth-child(15) { height: 38%; }
+    .bar:nth-child(16) { height: 58%; }
+    .bar:nth-child(17) { height: 80%; }
+    .bar:nth-child(18) { height: 48%; }
+    .bar:nth-child(19) { height: 34%; }
+    .bar:nth-child(20) { height: 62%; }
+
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 28px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 22px;
+      min-height: 210px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .feature .symbol {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+    }
+
+    .feature:nth-child(2) .symbol,
+    .feature:nth-child(5) .symbol {
+      background: var(--green);
+    }
+
+    .feature:nth-child(3) .symbol,
+    .feature:nth-child(6) .symbol {
+      background: #7c4dff;
+    }
+
+    .feature h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .feature p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .formats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .format {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .privacy-band {
+      background: #101923;
+      color: #fff;
+    }
+
+    .privacy {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 44px;
+      align-items: start;
+    }
+
+    .privacy h2 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .privacy p {
+      margin: 14px 0 0;
+      color: #c9d4df;
+      font-size: 17px;
+    }
+
+    .privacy-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .privacy-item {
+      padding: 18px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .privacy-item strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .privacy-item span {
+      color: #c9d4df;
+    }
+
+    .footer {
+      padding: 32px 24px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 860px) {
+      .navlinks {
+        display: none;
+      }
+
+      .section {
+        padding: 54px 18px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 34px;
+        padding-top: 42px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .lead {
+        font-size: 17px;
+      }
+
+      .trust,
+      .features,
+      .privacy {
+        grid-template-columns: 1fr;
+      }
+
+      .device {
+        min-height: auto;
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .phone-screen {
+        min-height: 430px;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand span {
+        white-space: normal;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="#top" aria-label="Smart Audio Extractor home">
+          <img src="assets/app-icon.webp" alt="">
+          <span>Smart Audio Extractor</span>
+        </a>
+        <div class="navlinks">
+          <a href="#features">Features</a>
+          <a href="#formats">Formats</a>
+          <a href="#privacy">Privacy</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="section hero">
+        <div>
+          <div class="eyebrow"><span class="dot"></span>Android audio toolkit</div>
+          <h1>Extract, edit, convert, and create audio on your phone.</h1>
+          <p class="lead">
+            Smart Audio Extractor turns videos into audio files, trims clips with precision,
+            converts popular formats, merges tracks, and helps create custom ringtones.
+            Everything runs locally on your Android device.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#features">Explore Features</a>
+            <a class="button secondary" href="#privacy">Privacy First</a>
+          </div>
+          <div class="trust" aria-label="Highlights">
+            <div class="trust-item">
+              <strong>Local processing</strong>
+              <span>No cloud upload required</span>
+            </div>
+            <div class="trust-item">
+              <strong>Popular formats</strong>
+              <span>MP3, WAV, M4A, FLAC, OGG</span>
+            </div>
+            <div class="trust-item">
+              <strong>All-in-one tools</strong>
+              <span>Extract, trim, convert, merge</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="device" aria-label="App feature preview">
+          <div class="phone-screen">
+            <div class="screen-head">
+              <div class="screen-title">Audio Tools</div>
+              <div class="screen-pill">Offline</div>
+            </div>
+            <div class="tool-grid">
+              <div class="tool-tile">
+                <div class="tool-icon">V</div>
+                <strong>Extract Audio</strong>
+                <span>Save sound from video files</span>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon">T</div>
+                <strong>Trim Clips</strong>
+                <span>Cut audio with waveform view</span>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon">C</div>
+                <strong>Convert</strong>
+                <span>Switch between audio formats</span>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon">R</div>
+                <strong>Ringtones</strong>
+                <span>Create custom phone sounds</span>
+              </div>
+            </div>
+            <div class="wave-panel">
+              <div class="wave-label">
+                <span>preview.wav</span>
+                <span>00:42</span>
+              </div>
+              <div class="wave" aria-hidden="true">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="section-title">
+          <h2>Everything you need for quick audio work.</h2>
+          <p>
+            Built for everyday tasks: saving audio from videos, preparing clips,
+            changing file formats, combining tracks, and making ringtones.
+          </p>
+        </div>
+        <div class="features">
+          <article class="feature">
+            <div class="symbol">1</div>
+            <h3>Video to Audio</h3>
+            <p>Extract high-quality audio from videos and save it as a standalone audio file.</p>
+          </article>
+          <article class="feature">
+            <div class="symbol">2</div>
+            <h3>Audio Trimmer</h3>
+            <p>Cut clips precisely with a waveform view, range selection, and simple preview controls.</p>
+          </article>
+          <article class="feature">
+            <div class="symbol">3</div>
+            <h3>Format Converter</h3>
+            <p>Convert audio between common formats and tune output quality for your needs.</p>
+          </article>
+          <article class="feature">
+            <div class="symbol">4</div>
+            <h3>Audio Merge</h3>
+            <p>Combine multiple audio files into one track with clear ordering and output controls.</p>
+          </article>
+          <article class="feature">
+            <div class="symbol">5</div>
+            <h3>Ringtone Maker</h3>
+            <p>Create custom ringtone, notification, or alarm sounds from your favorite audio clips.</p>
+          </article>
+          <article class="feature">
+            <div class="symbol">6</div>
+            <h3>Local Library</h3>
+            <p>Browse, search, sort, preview, share, and manage audio files on your device.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="formats" class="section">
+        <div class="section-title">
+          <h2>Support for the formats people actually use.</h2>
+          <p>
+            Work with popular video and audio files, then export audio in the format
+            that best fits sharing, editing, or storage.
+          </p>
+        </div>
+        <div class="formats" aria-label="Supported formats">
+          <span class="format">MP4</span>
+          <span class="format">MKV</span>
+          <span class="format">AVI</span>
+          <span class="format">MOV</span>
+          <span class="format">WEBM</span>
+          <span class="format">MP3</span>
+          <span class="format">WAV</span>
+          <span class="format">M4A</span>
+          <span class="format">AAC</span>
+          <span class="format">FLAC</span>
+          <span class="format">OGG</span>
+        </div>
+      </section>
+
+      <section id="privacy" class="privacy-band">
+        <div class="section privacy">
+          <div>
+            <h2>Your media stays on your device.</h2>
+            <p>
+              Smart Audio Extractor is designed for local audio processing.
+              Your videos and audio files are not uploaded to a cloud service for conversion.
+            </p>
+          </div>
+          <div class="privacy-list">
+            <div class="privacy-item">
+              <strong>Offline processing</strong>
+              <span>Extraction, trimming, conversion, and merging run locally on your Android device.</span>
+            </div>
+            <div class="privacy-item">
+              <strong>No media upload</strong>
+              <span>Your selected video and audio files remain under your control.</span>
+            </div>
+            <div class="privacy-item">
+              <strong>Simple file access</strong>
+              <span>The app requests file permissions only to let you choose and manage local media.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div><strong>Smart Audio Extractor</strong> by Video &amp; Audio Lab</div>
+        <div>For feedback, contact the developer through the Google Play listing.</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
