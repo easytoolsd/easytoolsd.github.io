@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VidPro is a local video compressor and converter for Android. Compress, convert, trim, rotate, and repair videos on your device without uploading your files.">
+    <meta name="keywords" content="VidPro, video compressor, video converter, compress video, reduce video size, convert to MP4, video repair, Android video tools">
+    <meta name="author" content="VidPro Team">
+    <meta property="og:title" content="VidPro - Video Compressor & Converter">
+    <meta property="og:description" content="Compress, convert, trim, rotate, and repair videos locally on Android. No video upload, no watermark.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="../doc/play/zd.png">
+    <title>VidPro - Video Compressor & Converter for Android</title>
+    <style>
+        :root {
+            --brand: #2563eb;
+            --brand-soft: #dbeafe;
+            --teal: #14b8a6;
+            --violet: #8b5cf6;
+            --ink: #111827;
+            --muted: #5b6472;
+            --line: #e5e7eb;
+            --surface: #ffffff;
+            --page: #f5f7fb;
+            --shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--page);
+            line-height: 1.55;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page {
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(14px);
+            background: rgba(245, 247, 251, 0.86);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+        }
+
+        .nav-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--brand), var(--violet));
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.24);
+        }
+
+        .brand-mark::before {
+            content: "";
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 13px solid #fff;
+            margin-left: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand);
+        }
+
+        .hero {
+            position: relative;
+            padding: 72px 22px 46px;
+            background:
+                radial-gradient(circle at 8% 18%, rgba(20, 184, 166, 0.18), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(139, 92, 246, 0.16), transparent 24%),
+                linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+        }
+
+        .hero-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+            gap: 44px;
+            align-items: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 11px;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 18px 0 16px;
+            font-size: clamp(40px, 6vw, 72px);
+            line-height: 0.96;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            max-width: 650px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 19px;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .button {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            border-radius: 8px;
+            padding: 0 18px;
+            font-weight: 800;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .button-primary {
+            color: #fff;
+            background: var(--brand);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+        }
+
+        .button-secondary {
+            color: var(--ink);
+            background: #fff;
+            border-color: var(--line);
+        }
+
+        .trust-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .trust-chip {
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hero-visual {
+            position: relative;
+            min-height: 430px;
+            display: grid;
+            place-items: center;
+        }
+
+        .feature-graphic {
+            width: min(100%, 520px);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        section {
+            padding: 66px 22px;
+        }
+
+        .section-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .section-head h2 {
+            margin: 0;
+            font-size: clamp(28px, 4vw, 42px);
+            line-height: 1.05;
+            letter-spacing: 0;
+        }
+
+        .section-head p {
+            max-width: 520px;
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px;
+            min-height: 178px;
+        }
+
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: var(--brand-soft);
+            color: var(--brand);
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .feature h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+        }
+
+        .feature p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .privacy {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .privacy .section-head p {
+            color: #cbd5e1;
+        }
+
+        .privacy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .privacy-item {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 8px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .privacy-item strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .privacy-item span {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .screenshots img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.11);
+            background: #fff;
+        }
+
+        .contact {
+            background: #fff;
+        }
+
+        .contact-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 24px;
+            background: #f8fafc;
+        }
+
+        .contact-box h2 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .contact-box p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        footer {
+            padding: 24px 22px 36px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .footer-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 920px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                min-height: auto;
+            }
+
+            .features {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .privacy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 46px;
+            }
+
+            .features,
+            .screenshots {
+                grid-template-columns: 1fr;
+            }
+
+            .section-head,
+            .contact-box {
+                display: block;
+            }
+
+            .contact-box .button {
+                margin-top: 18px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <nav class="nav" aria-label="Primary navigation">
+            <div class="nav-inner">
+                <a class="brand" href="#top" aria-label="VidPro home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span>VidPro</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#privacy">Privacy</a>
+                    <a href="#screenshots">Screenshots</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+        </nav>
+
+        <header class="hero" id="top">
+            <div class="hero-inner">
+                <div>
+                    <span class="eyebrow">Android video tools · Local processing</span>
+                    <h1>VidPro Video Compressor & Converter</h1>
+                    <p class="lead">
+                        Compress large videos, convert formats, trim clips, rotate sideways videos,
+                        and repair common playback issues directly on your Android device.
+                    </p>
+                    <div class="actions">
+                        <a class="button button-primary" href="https://play.google.com/store/apps/details?id=com.dg.vidpro.videoeditor" rel="noopener">View on Google Play</a>
+                        <a class="button button-secondary" href="mailto:EasyToolsd@outlook.com">Contact Support</a>
+                    </div>
+                    <div class="trust-row" aria-label="Key benefits">
+                        <span class="trust-chip">No video upload</span>
+                        <span class="trust-chip">No watermark</span>
+                        <span class="trust-chip">Fast local export</span>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-label="VidPro preview graphic">
+                    <img class="feature-graphic" src="../doc/play/zd.png" alt="VidPro video compressor and repair app preview">
+                </div>
+            </div>
+        </header>
+
+        <section id="features">
+            <div class="section-inner">
+                <div class="section-head">
+                    <h2>Simple tools for everyday video tasks</h2>
+                    <p>VidPro focuses on the actions people need most: smaller files, compatible formats, quick edits, and local processing.</p>
+                </div>
+                <div class="features">
+                    <article class="feature">
+                        <div class="feature-icon">C</div>
+                        <h3>Compress</h3>
+                        <p>Reduce video file size with Light, Balanced, and Deep compression levels.</p>
+                    </article>
+                    <article class="feature">
+                        <div class="feature-icon">F</div>
+                        <h3>Convert</h3>
+                        <p>Convert videos between MP4, MOV, and MKV for better compatibility.</p>
+                    </article>
+                    <article class="feature">
+                        <div class="feature-icon">R</div>
+                        <h3>Repair</h3>
+                        <p>Fix common playback issues such as duration, sync, and damaged indexes.</p>
+                    </article>
+                    <article class="feature">
+                        <div class="feature-icon">T</div>
+                        <h3>Trim</h3>
+                        <p>Cut long videos into shorter clips with a simple timeline.</p>
+                    </article>
+                    <article class="feature">
+                        <div class="feature-icon">↻</div>
+                        <h3>Rotate</h3>
+                        <p>Rotate or flip videos to correct sideways clips before sharing.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="privacy" id="privacy">
+            <div class="section-inner">
+                <div class="section-head">
+                    <h2>Your videos stay on your device</h2>
+                    <p>VidPro is built around local video processing. Your video files are not uploaded for compression, conversion, repair, trim, or rotate tasks.</p>
+                </div>
+                <div class="privacy-grid">
+                    <div class="privacy-item">
+                        <strong>No video upload</strong>
+                        <span>Processing runs locally on Android whenever you export a file.</span>
+                    </div>
+                    <div class="privacy-item">
+                        <strong>No watermark</strong>
+                        <span>Export clean videos that are ready to preview, manage, and share.</span>
+                    </div>
+                    <div class="privacy-item">
+                        <strong>Privacy policy</strong>
+                        <span>VidPro may use basic analytics and crash diagnostics to improve stability.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screenshots">
+            <div class="section-inner">
+                <div class="section-head">
+                    <h2>Preview the app</h2>
+                    <p>Core workflows are designed to be direct: choose a video, select an operation, export, then preview or share.</p>
+                </div>
+                <div class="screenshots">
+                    <img src="../doc/play/1.png" alt="VidPro compression screen">
+                    <img src="../doc/play/2.png" alt="VidPro trimming screen">
+                    <img src="../doc/play/3.png" alt="VidPro repair screen">
+                    <img src="../doc/play/4.png" alt="VidPro conversion screen">
+                    <img src="../doc/play/5.png" alt="VidPro file management screen">
+                    <img src="../doc/play/6.png" alt="VidPro privacy screen">
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="section-inner">
+                <div class="contact-box">
+                    <div>
+                        <h2>Questions or feedback?</h2>
+                        <p>Contact the VidPro team for support, privacy questions, or product feedback.</p>
+                    </div>
+                    <a class="button button-primary" href="mailto:EasyToolsd@outlook.com">EasyToolsd@outlook.com</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-inner">
+                <span>Copyright 2026 VidPro Team. All rights reserved.</span>
+                <span>Package: com.dg.vidpro.videoeditor</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
