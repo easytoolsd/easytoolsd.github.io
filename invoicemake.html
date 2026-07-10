@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Quote & Invoice Maker — Create Quotes & Invoices on Your Phone</title>
+  <meta name="description" content="Create professional quotes, send invoices, and track unpaid jobs from your phone. Works offline. Built for contractors, freelancers, and local service pros.">
+  <meta name="keywords" content="invoice maker, quote creator, invoice app, PDF invoice, contractor invoice, freelancer invoice, offline invoice">
+  <meta name="author" content="Daniel">
+  <meta property="og:title" content="Simple Quote & Invoice Maker">
+  <meta property="og:description" content="Create quotes, send invoices, and track unpaid jobs from your phone. No login, no cloud, fully offline.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://quoteinvoice.com">
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23146B49'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>Q</text></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --brand: #146B49;
+      --action: #1F8A5B;
+      --accent: #F2B84B;
+      --bg: #F3F7F3;
+      --text: #13201A;
+      --text-secondary: #5E6B62;
+      --text-muted: #839088;
+      --white: #FFFFFF;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(20, 107, 73, 0.10);
+      --shadow-lg: 0 8px 32px rgba(20, 107, 73, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(20,107,73,0.08);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: var(--shadow); }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 18px; color: var(--brand);
+      text-decoration: none;
+    }
+    .nav-logo svg { width: 36px; height: 36px; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 15px; font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--brand); }
+    .nav-cta {
+      background: var(--brand); color: var(--white) !important;
+      padding: 8px 20px; border-radius: 8px; font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: #0f5539; transform: translateY(-1px); }
+
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; transition: 0.3s; }
+
+    /* ---- HERO ---- */
+    .hero {
+      padding: 140px 24px 80px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%);
+    }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(20,107,73,0.08); color: var(--brand);
+      padding: 6px 16px; border-radius: 20px; font-size: 13px;
+      font-weight: 600; margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800; line-height: 1.15;
+      margin-bottom: 20px; letter-spacing: -0.02em;
+    }
+    .hero h1 .highlight { color: var(--brand); }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-secondary); max-width: 600px;
+      margin: 0 auto 36px; line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 10px; font-size: 16px;
+      font-weight: 600; text-decoration: none; transition: all 0.2s;
+      cursor: pointer; border: none;
+    }
+    .btn-primary {
+      background: var(--brand); color: var(--white);
+      box-shadow: 0 4px 16px rgba(20,107,73,0.25);
+    }
+    .btn-primary:hover {
+      background: #0f5539; transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(20,107,73,0.3);
+    }
+    .btn-secondary {
+      background: var(--white); color: var(--brand);
+      border: 2px solid rgba(20,107,73,0.2);
+    }
+    .btn-secondary:hover {
+      border-color: var(--brand); transform: translateY(-2px);
+    }
+    .hero-phone {
+      margin-top: 60px;
+      max-width: 280px;
+      margin-left: auto; margin-right: auto;
+      position: relative;
+    }
+    .phone-frame {
+      background: var(--text); border-radius: 32px; padding: 12px;
+      box-shadow: var(--shadow-lg);
+    }
+    .phone-screen {
+      background: var(--bg); border-radius: 22px; overflow: hidden;
+      aspect-ratio: 9/19.5;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 14px;
+    }
+
+    /* ---- STATS ---- */
+    .stats {
+      padding: 40px 24px;
+      background: var(--white);
+      border-top: 1px solid rgba(20,107,73,0.06);
+      border-bottom: 1px solid rgba(20,107,73,0.06);
+    }
+    .stats-inner {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+      text-align: center;
+    }
+    .stat-number { font-size: 36px; font-weight: 800; color: var(--brand); }
+    .stat-label { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ---- FEATURES ---- */
+    .features { padding: 100px 24px; }
+    .section-header { text-align: center; max-width: 640px; margin: 0 auto 60px; }
+    .section-header h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800; margin-bottom: 16px; letter-spacing: -0.01em;
+    }
+    .section-header p { font-size: 18px; color: var(--text-secondary); }
+    .features-grid {
+      max-width: 1120px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .feature-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 32px; box-shadow: var(--shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 1px solid rgba(20,107,73,0.06);
+    }
+    .feature-card:hover {
+      transform: translateY(-4px); box-shadow: var(--shadow-lg);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(20,107,73,0.08); display: flex;
+      align-items: center; justify-content: center;
+      margin-bottom: 20px; font-size: 24px;
+    }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ---- HOW IT WORKS ---- */
+    .how-it-works {
+      padding: 100px 24px;
+      background: var(--white);
+    }
+    .steps {
+      max-width: 800px; margin: 0 auto;
+      display: grid; gap: 40px;
+    }
+    .step {
+      display: flex; gap: 24px; align-items: flex-start;
+    }
+    .step-number {
+      flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+      background: var(--brand); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700;
+    }
+    .step-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .step-content p { font-size: 16px; color: var(--text-secondary); }
+
+    /* ---- AUDIENCE ---- */
+    .audience { padding: 100px 24px; }
+    .audience-grid {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;
+    }
+    .audience-item {
+      background: var(--white); border-radius: var(--radius);
+      padding: 20px; text-align: center; box-shadow: var(--shadow);
+      font-weight: 600; font-size: 15px;
+      transition: transform 0.2s;
+    }
+    .audience-item:hover { transform: translateY(-2px); }
+    .audience-item .emoji { font-size: 28px; display: block; margin-bottom: 8px; }
+
+    /* ---- OFFLINE ---- */
+    .offline {
+      padding: 80px 24px;
+      background: var(--brand);
+      color: var(--white);
+      text-align: center;
+    }
+    .offline h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; margin-bottom: 16px; }
+    .offline p { font-size: 18px; opacity: 0.9; max-width: 500px; margin: 0 auto; }
+
+    /* ---- PRIVACY ---- */
+    .privacy { padding: 100px 24px; background: var(--white); }
+    .privacy-grid {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    }
+    .privacy-item {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .privacy-icon {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(20,107,73,0.08); display: flex;
+      align-items: center; justify-content: center; font-size: 20px;
+    }
+    .privacy-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .privacy-item p { font-size: 14px; color: var(--text-secondary); }
+
+    /* ---- CTA ---- */
+    .cta {
+      padding: 100px 24px; text-align: center;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--white) 100%);
+    }
+    .cta h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; }
+    .cta p { font-size: 18px; color: var(--text-secondary); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* ---- FOOTER ---- */
+    footer {
+      padding: 40px 24px;
+      background: var(--text);
+      color: var(--text-muted);
+      text-align: center;
+      font-size: 14px;
+    }
+    footer a { color: var(--action); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--white); padding: 20px 24px;
+        border-bottom: 1px solid rgba(20,107,73,0.08);
+        box-shadow: var(--shadow);
+      }
+      .hamburger { display: block; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .privacy-grid { grid-template-columns: 1fr; }
+      .hero-phone { margin-top: 40px; }
+    }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate { animation: fadeInUp 0.6s ease forwards; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="8" fill="#146B49"/>
+        <text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial">Q</text>
+      </svg>
+      Quote & Invoice
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#download" class="nav-cta">Get the App</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">&#9889; Ready on Google Play</div>
+    <h1>Create <span class="highlight">Professional Quotes</span> &amp; Invoices on Your Phone</h1>
+    <p>No spreadsheets. No accounting jargon. Just fast, clean quotes and invoices you can create on-site and share as PDFs &mdash; even without internet.</p>
+    <div class="hero-actions">
+      <a href="#download" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.593-2.076l2.297 2.297a1 1 0 0 1 0 1.414l-2.297 2.297-2.302-2.302 2.302-2.706zM6.722 4.49L17.66 10.822l-2.302 2.302L6.722 4.49z"/></svg>
+        Download on Google Play
+      </a>
+      <a href="#features" class="btn btn-secondary">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Offline Capable</div>
+    </div>
+    <div>
+      <div class="stat-number">6</div>
+      <div class="stat-label">Languages Supported</div>
+    </div>
+    <div>
+      <div class="stat-number">Free</div>
+      <div class="stat-label">No Login Required</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <h2>Everything You Need, Nothing You Don&#39;t</h2>
+    <p>Built for contractors and freelancers who want to quote jobs, invoice clients, and track payments &mdash; from their phone.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#128196;</div>
+      <h3>Create Quotes on Site</h3>
+      <p>Add line items, set quantities and prices, apply discounts and tax. Generate professional quotes right after the job walkthrough.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128203;</div>
+      <h3>Turn Quotes into Invoices</h3>
+      <p>One tap converts an accepted quote into an invoice. No re-typing. All client details and line items carry over automatically.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128228;</div>
+      <h3>Send Professional PDFs</h3>
+      <p>Generate clean, branded PDFs with your business logo and signature. Share via email, WhatsApp, or any app on your phone.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128176;</div>
+      <h3>Track What You&#39;re Owed</h3>
+      <p>See total unpaid amounts, overdue invoices, and paid totals at a glance. Know exactly who owes you and how much.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128101;</div>
+      <h3>Manage Clients</h3>
+      <p>Store client contact info, search your list, and view all documents per client. Quick-start a new quote from any client profile.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128241;</div>
+      <h3>Works Fully Offline</h3>
+      <p>No internet needed. All data is stored on your device. Create quotes and invoices on job sites with unreliable connectivity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>Four simple steps from job site to paid invoice.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Add Your Client</h3>
+        <p>Enter the client name, phone, email, and address. Done in seconds.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Build the Quote</h3>
+        <p>Add line items with description, quantity, and price. Discount and tax are calculated automatically. Totals update in real time.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Share as PDF</h3>
+        <p>Generate a professional PDF with your business branding. Send via email, WhatsApp, text &mdash; whatever your client prefers.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Track &amp; Get Paid</h3>
+        <p>Convert accepted quotes to invoices, mark them as paid when the money comes in. Dashboard shows you exactly what&#39;s outstanding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section class="audience">
+  <div class="section-header">
+    <h2>Built for Service Pros</h2>
+    <p>If you work job-by-job and need to quote before and invoice after &mdash; this is for you.</p>
+  </div>
+  <div class="audience-grid">
+    <div class="audience-item"><span class="emoji">&#128295;</span>Handyman &amp; Repair</div>
+    <div class="audience-item"><span class="emoji">&#129520;</span>Painters</div>
+    <div class="audience-item"><span class="emoji">&#127807;</span>Lawn &amp; Garden</div>
+    <div class="audience-item"><span class="emoji">&#129521;</span>Cleaning Services</div>
+    <div class="audience-item"><span class="emoji">&#127912;</span>Photographers</div>
+    <div class="audience-item"><span class="emoji">&#128187;</span>Freelancers</div>
+    <div class="audience-item"><span class="emoji">&#128736;</span>Renovators</div>
+    <div class="audience-item"><span class="emoji">&#128297;</span>Mechanics</div>
+    <div class="audience-item"><span class="emoji">&#128218;</span>Consultants</div>
+    <div class="audience-item"><span class="emoji">&#127916;</span>Designers</div>
+  </div>
+</section>
+
+<!-- OFFLINE BANNER -->
+<section class="offline">
+  <h2>No Internet? No Problem.</h2>
+  <p>Create quotes, generate PDFs, and track payments &mdash; all without an internet connection. Your data stays on your phone.</p>
+</section>
+
+<!-- PRIVACY -->
+<section class="privacy" id="privacy">
+  <div class="section-header">
+    <h2>Your Privacy Matters</h2>
+    <p>We believe your business data belongs to you, not us.</p>
+  </div>
+  <div class="privacy-grid">
+    <div class="privacy-item">
+      <div class="privacy-icon">&#128274;</div>
+      <div>
+        <h4>No Account Required</h4>
+        <p>Open the app and start creating quotes. No email, no password, no sign-up.</p>
+      </div>
+    </div>
+    <div class="privacy-item">
+      <div class="privacy-icon">&#128240;</div>
+      <div>
+        <h4>Data Stays on Device</h4>
+        <p>All your clients, quotes, and invoices are stored locally. Nothing is uploaded to any server.</p>
+      </div>
+    </div>
+    <div class="privacy-item">
+      <div class="privacy-icon">&#128683;</div>
+      <div>
+        <h4>No Tracking</h4>
+        <p>We don&#39;t track your usage, sell your data, or show ads. Period.</p>
+      </div>
+    </div>
+    <div class="privacy-item">
+      <div class="privacy-icon">&#128737;</div>
+      <div>
+        <h4>Works Offline</h4>
+        <p>No network permissions required. The app functions fully without any internet connection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="download">
+  <h2>Start Getting Paid Faster</h2>
+  <p>Download Simple Quote &amp; Invoice Maker and create your first professional quote in under 2 minutes.</p>
+  <a href="https://play.google.com/store/apps" target="_blank" rel="noopener" class="btn btn-primary">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.593-2.076l2.297 2.297a1 1 0 0 1 0 1.414l-2.297 2.297-2.302-2.302 2.302-2.706zM6.722 4.49L17.66 10.822l-2.302 2.302L6.722 4.49z"/></svg>
+    Download on Google Play
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 Simple Quote &amp; Invoice Maker. Built with &#9825; for service professionals. | <a href="mailto:EasyToolsd@outlook.com">Contact</a></p>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // Mobile menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    const spans = hamburger.querySelectorAll('span');
+    if (navLinks.classList.contains('open')) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans[0].style.transform = 'none';
+      spans[1].style.opacity = '1';
+      spans[2].style.transform = 'none';
+    }
+  });
+
+  // Close mobile menu on link click
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      const spans = hamburger.querySelectorAll('span');
+      spans[0].style.transform = 'none';
+      spans[1].style.opacity = '1';
+      spans[2].style.transform = 'none';
+    });
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .step, .audience-item, .privacy-item').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>

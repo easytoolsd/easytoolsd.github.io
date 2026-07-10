@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Simple Quote &amp; Invoice Maker</title>
+  <meta name="robots" content="noindex">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --brand: #146B49;
+      --action: #1F8A5B;
+      --text: #13201A;
+      --text-secondary: #5E6B62;
+      --text-muted: #839088;
+      --bg: #F3F7F3;
+      --white: #FFFFFF;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: var(--brand);
+      color: var(--white);
+      padding: 48px 24px;
+      text-align: center;
+    }
+    header h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; margin-bottom: 8px; }
+    header p { opacity: 0.9; font-size: 15px; }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(20, 107, 73, 0.06);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--brand);
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 20px 0 8px;
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+    li {
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--action);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 24px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--brand); }
+
+    .meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(20,107,73,0.06);
+    }
+    footer a { color: var(--action); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Privacy Policy</h1>
+  <p>Simple Quote &amp; Invoice Maker</p>
+</header>
+
+<div class="container">
+  <a class="back-link" href="index.html">&#8592; Back to Home</a>
+  <div class="meta">Effective Date: July 10, 2026 &middot; Last Updated: July 10, 2026</div>
+
+  <div class="card">
+    <h2>1. Introduction</h2>
+    <p>This Privacy Policy explains how Simple Quote &amp; Invoice Maker ("the App") handles your personal information. We take your privacy seriously and are committed to keeping your data safe.</p>
+    <p><strong>Short version:</strong> We do not collect, store, or transmit any of your personal data. All information you enter into the App stays on your device. There is no server-side data collection, no user accounts, and no tracking.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Information We Collect</h2>
+    <h3>2.1 Data You Enter</h3>
+    <p>The App allows you to create and store quotes, invoices, and client records. All of this data is stored <strong>locally on your device</strong> using an on-device database (Room / SQLite). None of this data is transmitted to our servers or any third-party servers.</p>
+    <p>This includes:</p>
+    <ul>
+      <li>Client names, phone numbers, email addresses, and physical addresses</li>
+      <li>Quote and invoice details (line items, amounts, dates, statuses)</li>
+      <li>Business profile information (business name, logo, signature, contact details)</li>
+      <li>Generated PDF documents</li>
+    </ul>
+
+    <h3>2.2 Device Information</h3>
+    <p>The App does not collect device identifiers, hardware information, or any diagnostic data.</p>
+
+    <h3>2.3 Usage Analytics</h3>
+    <p>The App does not track your usage patterns, screen views, or feature engagement. We do not use analytics SDKs to monitor your behavior within the App.</p>
+
+    <h3>2.4 Crash Reports</h3>
+    <p>[Optional] If you choose to enable crash reporting, anonymized crash logs may be collected via Firebase Crashlytics to help us diagnose and fix app stability issues. These logs do not contain your personal data, quotes, invoices, or client information. You can disable this at any time through your device settings.</p>
+  </div>
+
+  <div class="card">
+    <h2>3. How We Use Your Information</h2>
+    <p>Since we do not collect or transmit your data, we do not use your personal information for any purpose. All data management is handled entirely on your device:</p>
+    <ul>
+      <li>Creating and storing quotes and invoices</li>
+      <li>Generating PDF documents for you to share</li>
+      <li>Searching and filtering your documents</li>
+      <li>Tracking payment statuses</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>4. Data Sharing and Disclosure</h2>
+    <p><strong>We do not share, sell, trade, or otherwise transfer your data to any third parties.</strong></p>
+    <p>The only way your data leaves your device is when you voluntarily share a generated PDF document through your device's native sharing features (e.g., email, messaging apps). This action is entirely under your control.</p>
+  </div>
+
+  <div class="card">
+    <h2>5. Data Security</h2>
+    <p>Your data is protected by the security of your device. We recommend:</p>
+    <ul>
+      <li>Using a device lock (PIN, pattern, fingerprint, or face recognition)</li>
+      <li>Keeping your device's operating system up to date</li>
+      <li>Backing up your device regularly, as the App data is stored locally and could be lost if the device is damaged or erased</li>
+    </ul>
+    <p>The App does not implement additional encryption beyond the standard Android data protection mechanisms.</p>
+  </div>
+
+  <div class="card">
+    <h2>6. Data Retention and Deletion</h2>
+    <p>Your data remains on your device until you choose to delete it:</p>
+    <ul>
+      <li><strong>Individual records:</strong> You can delete specific quotes, invoices, or client records at any time through the App's interface.</li>
+      <li><strong>All data:</strong> Uninstalling the App will remove all associated data from your device.</li>
+      <li>There is no server-side data to request deletion from, as we do not store any of your information remotely.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>7. Third-Party Services</h2>
+    <p>The App does not integrate with any third-party services that collect personal data. The following applies:</p>
+    <ul>
+      <li><strong>PDF Sharing:</strong> When you share a PDF, it uses Android's native sharing sheet. The receiving app's privacy policy governs that data transfer.</li>
+      <li><strong>Google Play:</strong> Google may collect anonymous download and usage statistics as described in the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
+      <li><strong>[Optional] Firebase Crashlytics:</strong> If enabled, collects anonymized crash diagnostics only. See <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy</a>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>8. Children's Privacy</h2>
+    <p>The App is designed for adult service professionals. We do not knowingly collect personal information from children under the age of 13. Since the App does not collect any data whatsoever, this policy inherently protects all users regardless of age.</p>
+  </div>
+
+  <div class="card">
+    <h2>9. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. We encourage you to review this policy periodically.</p>
+  </div>
+
+  <div class="card">
+    <h2>10. Contact Us</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us:</p>
+    <p><strong>Email:</strong> <a href="mailto:EasyToolsd@outlook.com">EasyToolsd@outlook.com</a></p>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 Simple Quote &amp; Invoice Maker. All rights reserved. | <a href="index.html">Home</a>
+</footer>
+
+</body>
+</html>
