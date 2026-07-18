@@ -1,278 +1,618 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>EasyDownloader</title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/icon" href="assets/images/favicon.ico"/>
-    <!-- Font Awesome -->
-    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Bootstrap -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Slick slider -->
-    <link href="assets/css/slick.css" rel="stylesheet">
-    <!-- Theme color -->
-    <link id="switcher" href="assets/css/theme-color/red-theme.css" rel="stylesheet">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EasyDownloader - Video Downloader & Video Saver</title>
+  <meta name="description" content="EasyDownloader helps you save videos and images from copied links or websites. Paste a link, parse supported platforms, or open the built-in browser to detect downloadable media.">
+  <meta name="keywords" content="video downloader, video saver, link video downloader, browser video downloader, HD MP4 downloader, no watermark video downloader">
+  <meta property="og:title" content="EasyDownloader - Save videos from links or websites">
+  <meta property="og:description" content="Paste video links, browse websites, detect media, and save videos or image posts when available.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://easytoolsd.github.io/">
+  <meta name="theme-color" content="#073f82">
+  <style>
+    :root {
+      --primary: #073f82;
+      --primary-2: #0b5ec7;
+      --ink: #101828;
+      --muted: #667085;
+      --soft: #f3f6fb;
+      --card: #ffffff;
+      --line: #e4e7ec;
+      --warn-bg: #fff7e6;
+      --warn: #8a5a00;
+      --radius: 24px;
+      --shadow: 0 24px 60px rgba(16, 24, 40, .12);
+    }
 
+    * {
+      box-sizing: border-box;
+    }
 
-    <!-- Main Style -->
-    <link href="style.css" rel="stylesheet">
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.6;
+    }
 
-    <!-- Fonts -->
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-    <!-- Open Sans for body and title font -->
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700,800" rel="stylesheet">
- 
- 
-	
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
 
-  
-  	
-  	<!-- Start Header -->
-	<header id="mu-header" class="" role="banner">
-		<div class="mu-header-overlay">
-			<div class="container">
-				<div class="mu-header-area">
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(228, 231, 236, .8);
+    }
 
-					<!-- Start Logo -->
-					<div class="mu-logo-area">
-						<!-- text based logo -->
-						<a class="mu-logo" href="#">EasyDownloader</a>
-						<!-- image based logo -->
-						<!-- <a class="mu-logo" href="#"><img src="assets/images/logo.png" alt="logo img"></a> -->
-					</div>
-					<!-- End Logo -->
+    .nav-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
 
-					<!-- Start header featured area -->
-					<div class="mu-header-featured-area">
-						<div class="mu-header-featured-img">
-							<img src="assets/images/easy_home.PNG" alt="home page">
-						</div>
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+    }
 
-						<div class="mu-header-featured-content">
-							<h1>Welcome To <span>EasyDownloader</span></h1>
-							<p>A powerful app designed to provide users with a convenient video downloading and playback experience. specifically tailored for TikTok no watermark video downloader.Fast,reliable,and easy to use! It is available on Google Play and has been well-received by users.</p>
-							<div class="mu-app-download-area">
-								<h4>Download The App</h4>
-								<a class="mu-google-btn" href="https://play.google.com/store/apps/details?id=com.ggvideo.easydownloader"><i class="fa fa-android"></i><span>google play</span></a>
-								<!-- <a class="mu-windows-btn" href="#"><i class="fa fa-windows"></i><span>windows store</span></a> -->
-							</div>
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(7, 63, 130, .25);
+    }
 
-						</div>
-					</div>
-					<!-- End header featured area -->
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
 
-				</div>
-			</div>
-		</div>
-	</header>
-	<!-- End Header -->
-	
-	<!-- Start main content -->
-		
-	<main role="main">
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(7, 63, 130, .22);
+    }
 
-		<!-- Start Feature -->
-		<section id="mu-feature">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="mu-feature-area">
+    .button.secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
 
-							<div class="mu-title-area">
-								<h2 class="mu-title">OUR APP FEATURES</h2>
-								<span class="mu-title-dot"></span>
-								<p>EasyDownloader is the ultimate video download companion for your Android device. With EasyDownloader, you can effortlessly save videos from popular websites and social media platforms directly to your device for offline viewing.</p>
-							</div>
+    .hero {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top right, rgba(11, 94, 199, .18), transparent 34%),
+        linear-gradient(180deg, #f8fbff 0%, #fff 82%);
+      padding: 88px 0 72px;
+    }
 
-							<!-- Start Feature Content -->
-							<div class="mu-feature-content">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="mu-feature-content-left">
-											<img class="mu-profile-img" src="assets/images/iphone-group.png" alt="iphone Image">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="mu-feature-content-right">
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.04fr .96fr;
+      gap: 56px;
+      align-items: center;
+    }
 
-											<!-- Start single feature item -->
-											<div class="media">
-						                        <div class="media-left">
-						                        	<button class="btn mu-feature-btn" type="button">
-														<img class="icon-img" src="assets/images/tiktok.png" width="18" height="18"  alt="tiktok" style="max-width:none;" >
-						                        	</button>
-						                        </div>
-						                        <div class="media-body">
-							                        <h3 class="media-heading">TikTok Video Downloads</h3>
-							                        <p>You can effortlessly obtain high-quality video download links without watermarks by parsing TikTok shared links. Save your favorite TikTok videos quickly and enjoy them anytime, anywhere.</p>
-						                        </div>
-						                    </div>
-						                    <!-- End single feature item -->
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eaf2ff;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
 
-						                    <!-- Start single feature item -->
-											<div class="media">
-						                        <div class="media-left">
-						                        	<button class="btn mu-feature-btn" type="button">
-														<img class="icon-img" src="assets/images/webvideo.png" width="18" height="18"  alt="tiktok" style="max-width:none;" >
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -2px;
+    }
 
-						                        	</button>
-						                        </div>
-						                        <div class="media-body">
-							                        <h3 class="media-heading">Web Video Capture</h3>
-							                        <p>While browsing video webpages, it intelligently detects and extracts the videos being played on the page, allowing you to download them to your device. This enables you to easily save videos from various websites.</p>
-						                        </div>
-						                    </div>
-						                    <!-- End single feature item -->
+    .hero p {
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 20px;
+      max-width: 620px;
+    }
 
-						                    <!-- Start single feature item -->
-											<div class="media">
-						                        <div class="media-left">
-						                        	<button class="btn mu-feature-btn" type="button">
-														<img class="icon-img" src="assets/images/vp.png" width="18" height="18"  alt="tiktok" style="max-width:none;" >
-						                        	</button>
-						                        </div>
-						                        <div class="media-body">
-							                        <h3 class="media-heading">Video Playback</h3>
-							                        <p>Provides a built-in video player, allowing you to directly watch the downloaded videos within the app. It supports popular video formats and offers a smooth viewing experience.</p>
-						                        </div>
-						                    </div>
-						                    <!-- End single feature item -->
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
 
-						                    <!-- Start single feature item -->
-											<div class="media">
-						                        <div class="media-left">
-						                        	<button class="btn mu-feature-btn" type="button">
-														<img class="icon-img" src="assets/images/Screenshot.png" width="18" height="18"  alt="tiktok" style="max-width:none;" >
-						                        	</button>
-						                        </div>
-						                        <div class="media-body">
-							                        <h3 class="media-heading">Screenshots and GIF Extraction</h3>
-							                        <p>Offers screenshot and GIF extraction capabilities. Capture exciting moments from videos at any time and save them as still screenshots or dynamic GIF images.</p>
-						                        </div>
-						                    </div>
-						                    <!-- End single feature item -->
+    .trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 14px;
+    }
 
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- End Feature Content -->
+    .trust span {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- End Feature -->
+    .phone-card {
+      position: relative;
+      max-width: 390px;
+      margin: 0 auto;
+      border-radius: 42px;
+      background: #101828;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      transform: rotate(1.5deg);
+    }
 
-		<!-- Start Apps Screenshot -->
-		<section id="mu-apps-screenshot">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="mu-apps-screenshot-area">
+    .phone-screen {
+      border-radius: 32px;
+      overflow: hidden;
+      background: var(--soft);
+      min-height: 680px;
+    }
 
-							<div class="mu-title-area">
-								<h2 class="mu-title">APPS SCREENSHOT</h2>
-								<span class="mu-title-dot"></span>
-								<p>Download EasyDownloader now and unlock the full potential of your video browsing experience. Save your favorite videos, tutorials, music, and more with ease. Stay entertained even when you're offline with EasyDownloader!</p>
+    .mock-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 36px 24px 26px;
+      font-size: 22px;
+      font-weight: 900;
+    }
 
-								<p>	Note: EasyDownloader respects the copyrights and terms of service of the websites it supports. Please ensure you have the necessary permissions to download and save videos before using this app.</p>
-							</div>
+    .mock-body {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
 
+    .mock-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, .06);
+    }
 
-							<!-- Start Apps Screenshot Content -->
-							<div class="mu-apps-screenshot-content">
+    .mock-card h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
 
-								<div class="mu-apps-screenshot-slider">
+    .mock-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/01.png" alt="App screenshot img">
-									</div>
+    .mock-input {
+      height: 50px;
+      border-radius: 12px;
+      border: 2px solid #d0d5dd;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: #98a2b3;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/02.png" alt="App screenshot img">
-									</div>
+    .mock-button {
+      height: 46px;
+      border-radius: 12px;
+      background: #e9eff7;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/03.png" alt="App screenshot img">
-									</div>
+    section {
+      padding: 84px 0;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/04.png" alt="App screenshot img">
-									</div>
+    .section-heading {
+      max-width: 740px;
+      margin: 0 auto 42px;
+      text-align: center;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/05.png" alt="App screenshot img">
-									</div>
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 46px);
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/06.png" alt="App screenshot img">
-									</div>
+    .section-heading p {
+      color: var(--muted);
+      font-size: 18px;
+      margin: 14px 0 0;
+    }
 
-									<div class="mu-single-screeshot">
-										<img src="assets/images/screenshot/07.png" alt="App screenshot img">
-									</div>
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
 
-								</div>
+    .feature-card {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 14px 34px rgba(16, 24, 40, .06);
+    }
 
-							</div>
-							<!-- End Apps Screenshot Content -->
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #eaf2ff;
+      color: var(--primary);
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- End Apps Screenshot -->
+    .feature-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
 
+    .feature-card p {
+      margin: 0;
+      color: var(--muted);
+    }
 
-	</main>
-	
-	<!-- End main content -->	
-			
-			
-	<!-- Start footer -->
-	<footer id="mu-footer" role="contentinfo">
-			<div class="container">
-				<div class="mu-footer-area">
-				</div>
-			</div>
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
 
-	</footer>
-	<!-- End footer -->
+    .step-panel {
+      border-radius: var(--radius);
+      background: var(--soft);
+      padding: 30px;
+      border: 1px solid #edf1f7;
+    }
 
-	
-	
-    <!-- jQuery library -->
-    <script src="assets/js/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <!-- Bootstrap -->
-    <script src="assets/js/bootstrap.min.js"></script>
-	<!-- Slick slider -->
-    <script type="text/javascript" src="assets/js/slick.min.js"></script>
-    <!-- Ajax contact form  -->
-    <script type="text/javascript" src="assets/js/app.js"></script>
-  
-    
-	
-    <!-- Custom js -->
-	<script type="text/javascript" src="assets/js/custom.js"></script>
+    .step-panel h3 {
+      margin: 0 0 18px;
+      font-size: 24px;
+    }
 
-	
-	
-    
-  </body>
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-top: 14px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .platforms {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .platforms span {
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .compliance {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid #ffe0a3;
+      border-radius: var(--radius);
+      padding: 26px;
+      font-weight: 700;
+    }
+
+    .cta {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      border-radius: 34px;
+      padding: 54px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 48px);
+      letter-spacing: -1px;
+    }
+
+    .cta p {
+      margin: 12px auto 28px;
+      color: rgba(255, 255, 255, .84);
+      max-width: 620px;
+      font-size: 18px;
+    }
+
+    .cta .button {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: none;
+    }
+
+    footer {
+      padding: 36px 0;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid,
+      .cards,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      .phone-card {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <span class="logo">↓</span>
+        <span>EasyDownloader</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#compliance">Safety</a>
+        <a class="button" href="https://play.google.com/store/apps/details?id=com.ggvideo.easydownloader">Google Play</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Video downloader for links and websites</div>
+        <h1>Save videos and images your way.</h1>
+        <p>Paste copied video links, parse supported platforms, or open websites in the built-in browser to detect downloadable media when available.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://play.google.com/store/apps/details?id=com.ggvideo.easydownloader">Get it on Google Play</a>
+          <a class="button secondary" href="#how">See how it works</a>
+        </div>
+        <div class="trust">
+          <span>Link parsing</span>
+          <span>Built-in browser</span>
+          <span>HD MP4 when available</span>
+          <span>Image post downloads</span>
+        </div>
+      </div>
+
+      <div class="phone-card" aria-label="EasyDownloader app preview">
+        <div class="phone-screen">
+          <div class="mock-header">EasyDownloader</div>
+          <div class="mock-body">
+            <div class="mock-card">
+              <h3>I have a video link</h3>
+              <p>Paste a copied share link or website URL and parse supported media.</p>
+              <div class="mock-input">Enter URL or share link</div>
+              <div class="mock-button">Paste and Parse</div>
+            </div>
+            <div class="mock-card">
+              <h3>I want to find video on a webpage</h3>
+              <p>Open a website, play a video, then check detected downloads.</p>
+              <div class="mock-button">Start Browsing</div>
+            </div>
+            <div class="mock-card">
+              <h3>Detected media</h3>
+              <p>Choose video quality or download image posts when available.</p>
+              <div class="mock-button">Download Video / Images</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Two simple ways to download</h2>
+        <p>EasyDownloader is built around the two real user scenarios: “I already copied a link” and “I want to browse a site and find a video.”</p>
+      </div>
+      <div class="cards">
+        <article class="feature-card">
+          <div class="icon">🔗</div>
+          <h3>Paste a link</h3>
+          <p>Copy a video share link, paste it into EasyDownloader, and parse available video or image resources.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">🌐</div>
+          <h3>Browse and detect</h3>
+          <p>Use the built-in browser, play a video on the page, and download detected media when available.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">🖼️</div>
+          <h3>Videos and images</h3>
+          <p>Download videos, choose available quality, or save image posts and photo collections.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>Fast download flow</h3>
+          <p>Clear download selection, background downloads, and simple download management.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">🎞️</div>
+          <h3>HD MP4 when available</h3>
+          <p>Save available MP4 video formats and choose quality options provided by the source.</p>
+        </article>
+        <article class="feature-card">
+          <div class="icon">🧭</div>
+          <h3>Recent websites</h3>
+          <p>Return to recently visited websites quickly and keep your browsing download flow efficient.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="background: var(--soft);">
+    <div class="container">
+      <div class="section-heading">
+        <h2>How EasyDownloader works</h2>
+        <p>Choose the path that matches what you have: a copied link or a webpage to browse.</p>
+      </div>
+      <div class="steps">
+        <div class="step-panel">
+          <h3>Download from a copied link</h3>
+          <div class="step"><span class="num">1</span><span>Open a video or media post and copy its share link.</span></div>
+          <div class="step"><span class="num">2</span><span>Open EasyDownloader and paste the link.</span></div>
+          <div class="step"><span class="num">3</span><span>Parse supported media and choose video quality or images.</span></div>
+          <div class="step"><span class="num">4</span><span>Download the selected media to your device.</span></div>
+        </div>
+        <div class="step-panel">
+          <h3>Download from a website</h3>
+          <div class="step"><span class="num">1</span><span>Open the built-in browser inside EasyDownloader.</span></div>
+          <div class="step"><span class="num">2</span><span>Visit a website and play the video you want to save.</span></div>
+          <div class="step"><span class="num">3</span><span>Check detected downloadable media.</span></div>
+          <div class="step"><span class="num">4</span><span>Select a media file and start downloading.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-heading">
+        <h2>Built for popular media workflows</h2>
+        <p>EasyDownloader works with supported video and media sites when downloadable resources are available.</p>
+      </div>
+      <div class="platforms">
+        <span>TikTok</span>
+        <span>X / Twitter</span>
+        <span>Vimeo</span>
+        <span>Dailymotion</span>
+        <span>Pinterest</span>
+        <span>Streamable</span>
+        <span>IMDB</span>
+        <span>More websites via browser detection</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="compliance">
+    <div class="container">
+      <div class="compliance">
+        <strong>Important:</strong> EasyDownloader does not support downloading YouTube videos due to platform policies and legal restrictions. Please only download content that you own, that is publicly available for download, or that you have permission to save. EasyDownloader is not affiliated with TikTok, X/Twitter, Instagram, Facebook, Vimeo, Dailymotion, Pinterest, Streamable, IMDB or any other third-party platform.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta">
+        <h2>Paste a link. Open a website. Save media.</h2>
+        <p>Try the redesigned EasyDownloader experience for video links, browser media detection, videos, and image posts.</p>
+        <a class="button" href="https://play.google.com/store/apps/details?id=com.ggvideo.easydownloader">Download on Google Play</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <span>© EasyDownloader</span>
+      <span>
+        <a href="https://play.google.com/store/apps/details?id=com.ggvideo.easydownloader">Google Play</a>
+        ·
+        <a href="/privacy.html">Privacy Policy</a>
+      </span>
+    </div>
+  </footer>
+</body>
 </html>
