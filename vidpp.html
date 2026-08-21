@@ -33,60 +33,70 @@
 </head>
 <body>
     <h1>Privacy Policy</h1>
-    <p class="date">Last Updated: May 12, 2026</p>
+    <p class="date">Last Updated: August 21, 2026</p>
 
     <div class="highlight">
-        <p><strong>Summary:</strong> VidPro processes your video files locally on your device. We do not upload your videos, file names, file paths, or raw file URIs. We use Firebase services for app analytics, crash diagnostics, and remote configuration so we can improve stability and tune app behavior.</p>
+        <p><strong>Summary:</strong> VidPro processes the photos, videos, audio, and editing data you use for creation locally on your device. We do not upload your media, file names, file paths, raw file URIs, subtitle text, or sticker images to our servers. We use Firebase for app analytics, crash diagnostics, and remote configuration as described below.</p>
     </div>
 
     <h2>1. Introduction</h2>
-    <p>Welcome to VidPro - Video Toolbox ("VidPro", "we", "our", or "us"). This Privacy Policy explains how information is handled when you use our mobile application.</p>
+    <p>Welcome to VidPro ("VidPro", "we", "our", or "us"), a local-first video editor, video maker, and media toolbox for Android. This Privacy Policy explains how information is accessed, stored, and processed when you use the app.</p>
 
-    <h2>2. Local Video Processing</h2>
-    <p>All video processing, including compression, conversion, repair, rotation, and trimming, is performed on your device. Your video files and video content are not uploaded to our servers.</p>
+    <h2>2. Local Media Processing</h2>
+    <p>Media selection, preview, editing, automatic video creation, compression, conversion, repair, rotation, trimming, transitions, stickers, music mixing, and export are performed on your device. VidPro does not upload your photos, videos, audio files, media content, subtitle text, or sticker images to our servers.</p>
 
-    <h2>3. Information We Do Not Collect</h2>
-    <p>VidPro does not collect or upload:</p>
+    <h2>3. Drafts and Local App Data</h2>
+    <p>VidPro stores drafts, editing settings, media references, thumbnails, export history, and preferences locally on your device so you can resume work and manage completed videos. This local data remains on your device until you delete it, clear app data, uninstall the app, or, where applicable, complete a project. If referenced media is removed from your device, a draft may no longer be fully restorable.</p>
+
+    <h2>4. Media and Personal Information We Do Not Upload</h2>
+    <p>VidPro does not upload the following to our servers or include it in our custom analytics events:</p>
     <ul>
-        <li>Your video files or video content</li>
-        <li>File names, absolute file paths, or raw content URIs</li>
+        <li>Your photo, video, or audio files and their content</li>
+        <li>File names, absolute file paths, raw content URIs, subtitle text, or sticker images</li>
         <li>Your name, email address, phone number, contacts, messages, or precise location</li>
-        <li>Advertising IDs for ad targeting</li>
     </ul>
+    <p>VidPro does not use advertising identifiers to serve targeted advertising.</p>
 
-    <h2>4. App Analytics and Diagnostics</h2>
-    <p>We use Firebase Analytics to understand broad app behavior, such as which features are opened, whether processing succeeds or fails, and how long key flows take. These events use aggregated technical metadata such as feature type, file extension, file size range, duration, codec choices, and processing result. They do not include video content, file names, absolute paths, or raw URIs.</p>
-    <p>We use Firebase Crashlytics to collect crash reports and non-fatal error diagnostics. Crash reports may include device and app state needed to debug failures, such as app version, Android version, feature type, error code, and processing stage.</p>
+    <h2>5. App Analytics and Diagnostics</h2>
+    <p>We use Firebase Analytics to understand aggregated app usage, such as screens and features opened, selected media count, clip count, editing action type, duration, resolution, aspect ratio, whether background music is used, processing or export result, elapsed time, and general error stage. These custom events do not contain media content, file names, file paths, raw URIs, subtitle text, or sticker images.</p>
+    <p>We use Firebase Crashlytics to collect crash reports and non-fatal diagnostics. These reports may include stack traces and technical app or device state needed to investigate failures, such as app version, Android version, device model, feature type, error code, processing stage, and whether the app was in the foreground or background.</p>
+    <p>Firebase may automatically process technical identifiers and service data, such as an app instance or Firebase installation identifier and, depending on device and SDK settings, an advertising identifier. It may also process app version, device model, operating system, language or region, general network information, IP-derived general location, and service usage information. We use this information for analytics, app functionality, fraud prevention, security, and diagnostics—not to serve targeted ads.</p>
 
-    <h2>5. Remote Configuration</h2>
-    <p>We use Firebase Remote Config to adjust app behavior without requiring an app update, such as compression defaults, feature toggles, and safety kill switches. Remote Config does not upload your video files.</p>
+    <h2>6. Remote Configuration</h2>
+    <p>We use Firebase Remote Config to adjust app behavior without requiring an app update, such as defaults, feature toggles, promotional entry points, and safety kill switches. Remote Config may use a Firebase installation identifier to provide configuration, but it does not upload your media or editing content.</p>
 
-    <h2>6. Permissions We Request</h2>
+    <h2>7. Permissions We Request</h2>
     <ul>
-        <li><strong>Storage/Media Permission:</strong> Used to read videos you select and save processed output files.</li>
-        <li><strong>Foreground Service:</strong> Used to keep video processing running reliably while the app is in the background.</li>
+        <li><strong>Photos and Videos:</strong> Used to display your media library, let you select photos and videos for editing, and manage locally exported results.</li>
+        <li><strong>Storage on older Android versions:</strong> Used to read selected media and save output files where required by the operating system.</li>
+        <li><strong>Internet and network state:</strong> Used only for Firebase analytics, crash diagnostics, remote configuration, and links that you choose to open. Your editing media is not uploaded.</li>
         <li><strong>Wake Lock:</strong> Used to reduce the chance of processing interruption while a task is active.</li>
     </ul>
+    <p>VidPro does not request access to your microphone, camera, contacts, messages, or precise location.</p>
 
-    <h2>7. Output Files</h2>
-    <p>Processed video files are saved on your device in the export directory you choose, such as <code>Movies/VidPro</code>. You can preview, share, rename, move, or delete these files.</p>
+    <h2>8. Output Files and Sharing</h2>
+    <p>Processed and edited videos are saved locally on your device, such as in a VidPro export directory or the app's local export storage. You can preview, share, rename, move, or delete available output files. When you choose to share a file, Android sends it to the app or service you select; that recipient's privacy policy applies.</p>
 
-    <h2>8. Third-Party Services</h2>
+    <h2>9. Data Retention and Your Choices</h2>
+    <p>You can delete drafts and exported works from within the app where those controls are available, or remove local app data through Android settings. Firebase data is retained according to our Firebase project settings and Google's applicable terms. You may also limit certain identifiers through your Android privacy settings.</p>
+
+    <h2>10. Third-Party Services</h2>
     <ul>
         <li><strong>FFmpeg SDK (videohandler):</strong> Local video processing library.</li>
-        <li><strong>Firebase Analytics:</strong> App usage analytics.</li>
+        <li><strong>Firebase Analytics:</strong> Aggregated app interaction and usage analytics.</li>
         <li><strong>Firebase Crashlytics:</strong> Crash and diagnostic reporting.</li>
         <li><strong>Firebase Remote Config:</strong> Remote configuration and feature controls.</li>
         <li><strong>Android framework libraries:</strong> Standard Android platform components.</li>
     </ul>
+    <p>Firebase services are provided by Google. Their processing is subject to Google's and Firebase's applicable terms and privacy documentation.</p>
 
-    <h2>9. Children's Privacy</h2>
+    <h2>11. Children's Privacy</h2>
     <p>VidPro is not directed to children under 13, and we do not knowingly collect personal information from children under 13.</p>
 
-    <h2>10. Changes to This Policy</h2>
+    <h2>12. Changes to This Policy</h2>
     <p>We may update this Privacy Policy from time to time. We will update the "Last Updated" date when changes are made.</p>
 
-    <h2>11. Contact Us</h2>
+    <h2>13. Contact Us</h2>
     <p>If you have questions about this Privacy Policy, contact us at:</p>
     <p>Email: <a href="mailto:EasyToolsd@outlook.com">EasyToolsd@outlook.com</a></p>
 
